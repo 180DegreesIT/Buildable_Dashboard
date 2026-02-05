@@ -1,0 +1,22 @@
+{
+  "name": "buildable-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Business dashboard for Buildable Approvals Pty Ltd",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -n client,server -c blue,green \"npm run dev -w client\" \"npm run dev -w server\"",
+    "build": "npm run build -w client && npm run build -w server",
+    "start": "npm run start -w server",
+    "migrate": "cd server && npx prisma migrate dev",
+    "migrate:deploy": "cd server && npx prisma migrate deploy",
+    "studio": "cd server && npx prisma studio",
+    "seed": "npm run seed -w server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

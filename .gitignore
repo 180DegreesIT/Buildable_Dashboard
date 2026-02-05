@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.env
+*.log
+.DS_Store
+Thumbs.db
+.claude/
+
+# Prisma
+server/src/generated/
+
+# Build artifacts
+client/dist/
+server/dist/
