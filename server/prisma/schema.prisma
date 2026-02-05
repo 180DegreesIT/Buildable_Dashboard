@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -12,4 +6,512 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum DataSource {
+  csv_upload
+  xero_api
+  manual_entry
+  backfilled
+}
+
+enum ProjectType {
+  residential
+  commercial
+  retrospective
+}
+
+enum SalesType {
+  residential
+  commercial
+  retrospective
+}
+
+enum Region {
+  cairns
+  mackay
+  nq_commercial
+  seq_residential
+  seq_commercial
+  town_planning
+  townsville
+  wide_bay
+  all_in_access
+}
+
+enum LeadSource {
+  google
+  seo
+  meta
+  bing
+  tiktok
+  other
+}
+
+enum MarketingPlatform {
+  google_ads
+  meta_ads
+  bing_ads
+  tiktok_ads
+  seo
+}
+
+enum RevenueCategory {
+  class_1a
+  class_10a_sheds
+  class_10b_pools
+  class_2_9_commercial
+  inspections
+  retrospective
+  council_fees
+  planning_1_10
+  planning_2_9
+  property_searches
+  qleave
+  sundry
+  access_labour_hire
+  insurance_levy
+}
+
+enum UserRole {
+  super_admin
+  executive
+  manager
+  staff
+}
+
+enum PermissionLevel {
+  read
+  write
+  no_access
+}
+
+enum UploadStatus {
+  pending
+  processing
+  completed
+  failed
+  rolled_back
+}
+
+enum TargetType {
+  net_profit
+  residential_revenue
+  commercial_revenue
+  retrospective_revenue
+  team_revenue
+  breakeven
+}
+
+enum LiabilityType {
+  recurring
+  one_off
+}
+
+enum DashboardPage {
+  executive_summary
+  financial_deep_dive
+  pl_monthly_detail
+  sales_pipeline
+  marketing_leads
+  operations_productivity
+  regional_performance
+  cash_position
+  data_management
+  target_management
+  staff_management
+  admin_settings
+  user_permission_management
+}
+
+enum StaffRole {
+  certifier
+  cadet
+  admin
+  town_planner
+  manager
+  other
+}
+
+// ─── Weekly Data Tables ───────────────────────────────────────────────────────
+
+model FinancialWeekly {
+  id                    Int        @id @default(autoincrement())
+  weekEnding            DateTime   @map("week_ending") @db.Date
+  totalTradingIncome    Decimal    @map("total_trading_income") @db.Decimal(14, 2)
+  totalCostOfSales      Decimal    @map("total_cost_of_sales") @db.Decimal(14, 2)
+  grossProfit           Decimal    @map("gross_profit") @db.Decimal(14, 2)
+  otherIncome           Decimal    @map("other_income") @db.Decimal(14, 2)
+  operatingExpenses     Decimal    @map("operating_expenses") @db.Decimal(14, 2)
+  wagesAndSalaries      Decimal    @map("wages_and_salaries") @db.Decimal(14, 2)
+  netProfit             Decimal    @map("net_profit") @db.Decimal(14, 2)
+  dataSource            DataSource @map("data_source")
+  uploadId              Int?       @map("upload_id")
+  upload                CsvUpload? @relation(fields: [uploadId], references: [id])
+  createdAt             DateTime   @default(now()) @map("created_at")
+  updatedAt             DateTime   @updatedAt @map("updated_at")
+
+  @@unique([weekEnding])
+  @@map("financial_weekly")
+}
+
+model RevenueWeekly {
+  id         Int             @id @default(autoincrement())
+  weekEnding DateTime        @map("week_ending") @db.Date
+  category   RevenueCategory
+  amount     Decimal         @db.Decimal(14, 2)
+  dataSource DataSource      @map("data_source")
+  uploadId   Int?            @map("upload_id")
+  upload     CsvUpload?      @relation(fields: [uploadId], references: [id])
+  createdAt  DateTime        @default(now()) @map("created_at")
+  updatedAt  DateTime        @updatedAt @map("updated_at")
+
+  @@unique([weekEnding, category])
+  @@map("revenue_weekly")
+}
+
+model ProjectsWeekly {
+  id                    Int         @id @default(autoincrement())
+  weekEnding            DateTime    @map("week_ending") @db.Date
+  projectType           ProjectType @map("project_type")
+  hyperfloCount         Int         @map("hyperflo_count")
+  xeroInvoicedAmount    Decimal     @map("xero_invoiced_amount") @db.Decimal(14, 2)
+  newBusinessPercentage Decimal?    @map("new_business_percentage") @db.Decimal(5, 2)
+  dataSource            DataSource  @map("data_source")
+  uploadId              Int?        @map("upload_id")
+  upload                CsvUpload?  @relation(fields: [uploadId], references: [id])
+  createdAt             DateTime    @default(now()) @map("created_at")
+  updatedAt             DateTime    @updatedAt @map("updated_at")
+
+  @@unique([weekEnding, projectType])
+  @@map("projects_weekly")
+}
+
+model SalesWeekly {
+  id                Int        @id @default(autoincrement())
+  weekEnding        DateTime   @map("week_ending") @db.Date
+  salesType         SalesType  @map("sales_type")
+  quotesIssuedCount Int        @map("quotes_issued_count")
+  quotesIssuedValue Decimal    @map("quotes_issued_value") @db.Decimal(14, 2)
+  quotesWonCount    Int        @map("quotes_won_count")
+  quotesWonValue    Decimal    @map("quotes_won_value") @db.Decimal(14, 2)
+  dataSource        DataSource @map("data_source")
+  uploadId          Int?       @map("upload_id")
+  upload            CsvUpload? @relation(fields: [uploadId], references: [id])
+  createdAt         DateTime   @default(now()) @map("created_at")
+  updatedAt         DateTime   @updatedAt @map("updated_at")
+
+  @@unique([weekEnding, salesType])
+  @@map("sales_weekly")
+}
+
+model SalesRegionalWeekly {
+  id                Int        @id @default(autoincrement())
+  weekEnding        DateTime   @map("week_ending") @db.Date
+  region            Region
+  salesType         SalesType  @map("sales_type")
+  quotesIssuedCount Int        @map("quotes_issued_count")
+  quotesIssuedValue Decimal    @map("quotes_issued_value") @db.Decimal(14, 2)
+  quotesWonCount    Int        @map("quotes_won_count")
+  quotesWonValue    Decimal    @map("quotes_won_value") @db.Decimal(14, 2)
+  dataSource        DataSource @map("data_source")
+  uploadId          Int?       @map("upload_id")
+  upload            CsvUpload? @relation(fields: [uploadId], references: [id])
+  createdAt         DateTime   @default(now()) @map("created_at")
+  updatedAt         DateTime   @updatedAt @map("updated_at")
+
+  @@unique([weekEnding, region, salesType])
+  @@map("sales_regional_weekly")
+}
+
+model TeamPerformanceWeekly {
+  id              Int        @id @default(autoincrement())
+  weekEnding      DateTime   @map("week_ending") @db.Date
+  region          Region
+  actualInvoiced  Decimal    @map("actual_invoiced") @db.Decimal(14, 2)
+  dataSource      DataSource @map("data_source")
+  uploadId        Int?       @map("upload_id")
+  upload          CsvUpload? @relation(fields: [uploadId], references: [id])
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  @@unique([weekEnding, region])
+  @@map("team_performance_weekly")
+}
+
+model LeadsWeekly {
+  id          Int        @id @default(autoincrement())
+  weekEnding  DateTime   @map("week_ending") @db.Date
+  source      LeadSource
+  leadCount   Decimal    @map("lead_count") @db.Decimal(10, 2)
+  costPerLead Decimal?   @map("cost_per_lead") @db.Decimal(10, 2)
+  totalCost   Decimal?   @map("total_cost") @db.Decimal(14, 2)
+  dataSource  DataSource @map("data_source")
+  uploadId    Int?       @map("upload_id")
+  upload      CsvUpload? @relation(fields: [uploadId], references: [id])
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  @@unique([weekEnding, source])
+  @@map("leads_weekly")
+}
+
+model MarketingPerformanceWeekly {
+  id          Int               @id @default(autoincrement())
+  weekEnding  DateTime          @map("week_ending") @db.Date
+  platform    MarketingPlatform
+  impressions Int?
+  clicks      Int?
+  cost        Decimal?          @db.Decimal(14, 2)
+  conversions Int?
+  ctr         Decimal?          @db.Decimal(5, 4)
+  cpc         Decimal?          @db.Decimal(10, 2)
+  dataSource  DataSource        @map("data_source")
+  uploadId    Int?              @map("upload_id")
+  upload      CsvUpload?        @relation(fields: [uploadId], references: [id])
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  @@unique([weekEnding, platform])
+  @@map("marketing_performance_weekly")
+}
+
+model WebsiteAnalyticsWeekly {
+  id                 Int        @id @default(autoincrement())
+  weekEnding         DateTime   @map("week_ending") @db.Date
+  sessions           Int?
+  users              Int?
+  pageViews          Int?       @map("page_views")
+  bounceRate         Decimal?   @map("bounce_rate") @db.Decimal(5, 2)
+  avgSessionDuration Decimal?   @map("avg_session_duration") @db.Decimal(10, 2)
+  newUsers           Int?       @map("new_users")
+  dataSource         DataSource @map("data_source")
+  uploadId           Int?       @map("upload_id")
+  upload             CsvUpload? @relation(fields: [uploadId], references: [id])
+  createdAt          DateTime   @default(now()) @map("created_at")
+  updatedAt          DateTime   @updatedAt @map("updated_at")
+
+  @@unique([weekEnding])
+  @@map("website_analytics_weekly")
+}
+
+model StaffProductivityWeekly {
+  id                    Int        @id @default(autoincrement())
+  weekEnding            DateTime   @map("week_ending") @db.Date
+  staffName             String     @map("staff_name")
+  role                  StaffRole
+  region                Region?
+  jobsCompleted         Int?       @map("jobs_completed")
+  revenueGenerated      Decimal?   @map("revenue_generated") @db.Decimal(14, 2)
+  inspectionsCompleted  Int?       @map("inspections_completed")
+  dataSource            DataSource @map("data_source")
+  uploadId              Int?       @map("upload_id")
+  upload                CsvUpload? @relation(fields: [uploadId], references: [id])
+  createdAt             DateTime   @default(now()) @map("created_at")
+  updatedAt             DateTime   @updatedAt @map("updated_at")
+
+  @@unique([weekEnding, staffName])
+  @@map("staff_productivity_weekly")
+}
+
+model PhoneWeekly {
+  id               Int        @id @default(autoincrement())
+  weekEnding       DateTime   @map("week_ending") @db.Date
+  staffName        String     @map("staff_name")
+  inboundCalls     Int?       @map("inbound_calls")
+  outboundCalls    Int?       @map("outbound_calls")
+  missedCalls      Int?       @map("missed_calls")
+  avgCallDuration  Decimal?   @map("avg_call_duration") @db.Decimal(10, 2)
+  dataSource       DataSource @map("data_source")
+  uploadId         Int?       @map("upload_id")
+  upload           CsvUpload? @relation(fields: [uploadId], references: [id])
+  createdAt        DateTime   @default(now()) @map("created_at")
+  updatedAt        DateTime   @updatedAt @map("updated_at")
+
+  @@unique([weekEnding, staffName])
+  @@map("phone_weekly")
+}
+
+model CashPositionWeekly {
+  id                  Int        @id @default(autoincrement())
+  weekEnding          DateTime   @map("week_ending") @db.Date
+  everydayAccount     Decimal?   @map("everyday_account") @db.Decimal(14, 2)
+  overdraftLimit      Decimal?   @map("overdraft_limit") @db.Decimal(14, 2)
+  taxSavings          Decimal?   @map("tax_savings") @db.Decimal(14, 2)
+  capitalAccount      Decimal?   @map("capital_account") @db.Decimal(14, 2)
+  creditCards         Decimal?   @map("credit_cards") @db.Decimal(14, 2)
+  totalCashAvailable  Decimal?   @map("total_cash_available") @db.Decimal(14, 2)
+  totalReceivables    Decimal?   @map("total_receivables") @db.Decimal(14, 2)
+  currentReceivables  Decimal?   @map("current_receivables") @db.Decimal(14, 2)
+  over30Days          Decimal?   @map("over_30_days") @db.Decimal(14, 2)
+  over60Days          Decimal?   @map("over_60_days") @db.Decimal(14, 2)
+  over90Days          Decimal?   @map("over_90_days") @db.Decimal(14, 2)
+  totalPayables       Decimal?   @map("total_payables") @db.Decimal(14, 2)
+  dataSource          DataSource @map("data_source")
+  uploadId            Int?       @map("upload_id")
+  upload              CsvUpload? @relation(fields: [uploadId], references: [id])
+  createdAt           DateTime   @default(now()) @map("created_at")
+  updatedAt           DateTime   @updatedAt @map("updated_at")
+
+  @@unique([weekEnding])
+  @@map("cash_position_weekly")
+}
+
+model GoogleReviewsWeekly {
+  id                      Int        @id @default(autoincrement())
+  weekEnding              DateTime   @map("week_ending") @db.Date
+  reviewCount             Int        @map("review_count")
+  averageRating           Decimal?   @map("average_rating") @db.Decimal(3, 2)
+  cumulativeCount         Int?       @map("cumulative_count")
+  cumulativeAverageRating Decimal?   @map("cumulative_average_rating") @db.Decimal(3, 2)
+  dataSource              DataSource @map("data_source")
+  uploadId                Int?       @map("upload_id")
+  upload                  CsvUpload? @relation(fields: [uploadId], references: [id])
+  createdAt               DateTime   @default(now()) @map("created_at")
+  updatedAt               DateTime   @updatedAt @map("updated_at")
+
+  @@unique([weekEnding])
+  @@map("google_reviews_weekly")
+}
+
+// ─── Liabilities ──────────────────────────────────────────────────────────────
+
+model UpcomingLiability {
+  id            Int           @id @default(autoincrement())
+  description   String
+  amount        Decimal       @db.Decimal(14, 2)
+  dueDate       DateTime      @map("due_date") @db.Date
+  liabilityType LiabilityType @map("liability_type")
+  isActive      Boolean       @default(true) @map("is_active")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  @@map("upcoming_liabilities")
+}
+
+// ─── Targets ──────────────────────────────────────────────────────────────────
+
+model Target {
+  id            Int             @id @default(autoincrement())
+  targetType    TargetType      @map("target_type")
+  entity        Region?
+  amount        Decimal         @db.Decimal(14, 2)
+  effectiveFrom DateTime        @map("effective_from") @db.Date
+  effectiveTo   DateTime?       @map("effective_to") @db.Date
+  setBy         String?         @map("set_by")
+  notes         String?
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  history       TargetHistory[]
+
+  @@index([targetType, entity, effectiveFrom])
+  @@map("targets")
+}
+
+model TargetHistory {
+  id             Int      @id @default(autoincrement())
+  targetId       Int      @map("target_id")
+  target         Target   @relation(fields: [targetId], references: [id])
+  previousAmount Decimal  @map("previous_amount") @db.Decimal(14, 2)
+  newAmount      Decimal  @map("new_amount") @db.Decimal(14, 2)
+  changedBy      String?  @map("changed_by")
+  changedAt      DateTime @default(now()) @map("changed_at")
+  notes          String?
+
+  @@map("target_history")
+}
+
+// ─── CSV Uploads ──────────────────────────────────────────────────────────────
+
+model CsvUpload {
+  id             Int              @id @default(autoincrement())
+  fileName       String           @map("file_name")
+  dataType       String           @map("data_type")
+  mappingId      Int?             @map("mapping_id")
+  mapping        CsvColumnMapping? @relation(fields: [mappingId], references: [id])
+  rowsProcessed  Int              @default(0) @map("rows_processed")
+  rowsFailed     Int              @default(0) @map("rows_failed")
+  rowsSkipped    Int              @default(0) @map("rows_skipped")
+  status         UploadStatus     @default(pending)
+  errorLog       Json?            @map("error_log")
+  rollbackData   Json?            @map("rollback_data")
+  uploadedBy     String?          @map("uploaded_by")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+
+  // Relations to data tables for rollback tracking
+  financialWeekly            FinancialWeekly[]
+  revenueWeekly              RevenueWeekly[]
+  projectsWeekly             ProjectsWeekly[]
+  salesWeekly                SalesWeekly[]
+  salesRegionalWeekly        SalesRegionalWeekly[]
+  teamPerformanceWeekly      TeamPerformanceWeekly[]
+  leadsWeekly                LeadsWeekly[]
+  marketingPerformanceWeekly MarketingPerformanceWeekly[]
+  websiteAnalyticsWeekly     WebsiteAnalyticsWeekly[]
+  staffProductivityWeekly    StaffProductivityWeekly[]
+  phoneWeekly                PhoneWeekly[]
+  cashPositionWeekly         CashPositionWeekly[]
+  googleReviewsWeekly        GoogleReviewsWeekly[]
+
+  @@map("csv_uploads")
+}
+
+model CsvColumnMapping {
+  id         Int         @id @default(autoincrement())
+  name       String
+  dataType   String      @map("data_type")
+  mapping    Json
+  createdBy  String?     @map("created_by")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+  uploads    CsvUpload[]
+
+  @@map("csv_column_mappings")
+}
+
+// ─── Users & Permissions ──────────────────────────────────────────────────────
+
+model User {
+  id          Int              @id @default(autoincrement())
+  m365Id      String?          @unique @map("m365_id")
+  email       String           @unique
+  displayName String           @map("display_name")
+  role        UserRole         @default(staff)
+  isActive    Boolean          @default(true) @map("is_active")
+  team        String?
+  region      Region?
+  lastLogin   DateTime?        @map("last_login")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  permissions UserPermission[]
+
+  @@map("users")
+}
+
+model UserPermission {
+  id              Int             @id @default(autoincrement())
+  userId          Int             @map("user_id")
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  page            DashboardPage
+  permissionLevel PermissionLevel @map("permission_level")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  @@unique([userId, page])
+  @@map("user_permissions")
+}
+
+// ─── Settings ─────────────────────────────────────────────────────────────────
+
+model Setting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
 }
