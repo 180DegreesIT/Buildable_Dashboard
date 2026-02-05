@@ -259,4 +259,243 @@ router.get('/executive-summary', validateQuery(schemas.weekEndingQuery), async (
   } catch (err) { next(err); }
 });
 
+// Default pass-through categories (stripped when Net Revenue toggle is on)
+const DEFAULT_PASS_THROUGH: string[] = ['council_fees'];
+
+const REVENUE_CATEGORY_LABELS: Record<string, string> = {
+  class_1a: 'Class 1A',
+  class_10a_sheds: 'Class 10a Sheds',
+  class_10b_pools: 'Class 10b Pools',
+  class_2_9_commercial: 'Class 2-9 Commercial',
+  inspections: 'Inspections',
+  retrospective: 'Retrospective',
+  council_fees: 'Council Fees',
+  planning_1_10: 'Planning 1&10',
+  planning_2_9: 'Planning 2-9',
+  property_searches: 'Property Searches',
+  qleave: 'Qleave',
+  sundry: 'Sundry',
+  access_labour_hire: 'Access Labour Hire',
+  insurance_levy: 'Insurance Levy',
+};
+
+/**
+ * GET /financial-deep-dive?weekEnding=YYYY-MM-DD
+ * Returns all data for the Financial Deep Dive page.
+ */
+router.get('/financial-deep-dive', validateQuery(schemas.weekEndingQuery), async (req, res, next) => {
+  try {
+    const { weekEnding } = (req as any).validated;
+    const weekDate = new Date(weekEnding);
+
+    // 13-week window
+    const trendStart = new Date(weekDate);
+    trendStart.setDate(trendStart.getDate() - 12 * 7);
+
+    // 6-month window for monthly aggregation (roughly 26 weeks)
+    const monthlyStart = new Date(weekDate);
+    monthlyStart.setMonth(monthlyStart.getMonth() - 5);
+    monthlyStart.setDate(1); // Start of month
+
+    // Resolve pass-through categories from settings
+    let passThroughCategories = DEFAULT_PASS_THROUGH;
+    try {
+      const setting = await prisma.setting.findUnique({ where: { key: 'pass_through_categories' } });
+      if (setting && Array.isArray(setting.value)) {
+        passThroughCategories = setting.value as string[];
+      }
+    } catch { /* use default */ }
+
+    const [
+      financial,
+      financialTrend,
+      revenueBreakdown,
+      revenueTrend,
+      cashPosition,
+      liabilities,
+      netProfitBudget,
+      projectsWeek,
+    ] = await Promise.all([
+      // Current week P&L
+      FinancialService.getWeeklySummary(weekDate),
+      // Financial trend for cost analysis + monthly aggregation
+      FinancialService.getWeeklyRange(monthlyStart, weekDate),
+      // Revenue breakdown for current week
+      prisma.revenueWeekly.findMany({
+        where: { weekEnding: weekDate },
+        orderBy: { category: 'asc' },
+      }),
+      // Revenue breakdown trend (13 weeks for stacked area chart)
+      prisma.revenueWeekly.findMany({
+        where: { weekEnding: { gte: trendStart, lte: weekDate } },
+        orderBy: [{ weekEnding: 'asc' }, { category: 'asc' }],
+      }),
+      // Cash position
+      FinancialService.getCashPosition(weekDate),
+      // Upcoming liabilities (active only)
+      prisma.upcomingLiability.findMany({
+        where: { isActive: true },
+        orderBy: { dueDate: 'asc' },
+      }),
+      // Net profit budget target
+      TargetService.getTargetForWeek('net_profit', weekDate),
+      // Projects for Revenue (Invoiced) calculation
+      prisma.projectsWeekly.findMany({
+        where: { weekEnding: weekDate },
+      }),
+    ]);
+
+    const budgetAmount = netProfitBudget ? Number(netProfitBudget.amount) : null;
+
+    // --- P&L Summary (weekly) ---
+    const plWeekly = financial ? {
+      totalTradingIncome: Number(financial.totalTradingIncome),
+      totalCostOfSales: Number(financial.totalCostOfSales),
+      grossProfit: Number(financial.grossProfit),
+      otherIncome: Number(financial.otherIncome),
+      operatingExpenses: Number(financial.operatingExpenses),
+      wagesAndSalaries: Number(financial.wagesAndSalaries),
+      netProfit: Number(financial.netProfit),
+      budget: budgetAmount,
+      profitPercentage: financial.profitPercentage,
+      revenueToStaffRatio: financial.revenueToStaffRatio,
+      grossProfitMargin: financial.grossProfitMargin,
+    } : null;
+
+    // --- P&L Monthly aggregation ---
+    // Group financial trend by YYYY-MM and sum
+    const monthlyMap = new Map<string, {
+      totalTradingIncome: number; totalCostOfSales: number; grossProfit: number;
+      otherIncome: number; operatingExpenses: number; wagesAndSalaries: number;
+      netProfit: number; weekCount: number;
+    }>();
+
+    for (const w of financialTrend) {
+      const d = new Date(w.weekEnding);
+      const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const existing = monthlyMap.get(monthKey) ?? {
+        totalTradingIncome: 0, totalCostOfSales: 0, grossProfit: 0,
+        otherIncome: 0, operatingExpenses: 0, wagesAndSalaries: 0,
+        netProfit: 0, weekCount: 0,
+      };
+      existing.totalTradingIncome += Number(w.totalTradingIncome);
+      existing.totalCostOfSales += Number(w.totalCostOfSales);
+      existing.grossProfit += Number(w.grossProfit);
+      existing.otherIncome += Number(w.otherIncome);
+      existing.operatingExpenses += Number(w.operatingExpenses);
+      existing.wagesAndSalaries += Number(w.wagesAndSalaries);
+      existing.netProfit += Number(w.netProfit);
+      existing.weekCount += 1;
+      monthlyMap.set(monthKey, existing);
+    }
+
+    const plMonthly = Array.from(monthlyMap.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([month, data]) => {
+        const income = data.totalTradingIncome;
+        return {
+          month,
+          ...data,
+          budget: budgetAmount != null ? budgetAmount * data.weekCount : null,
+          profitPercentage: income > 0 ? Number(((data.netProfit / income) * 100).toFixed(2)) : 0,
+          revenueToStaffRatio: income > 0 ? Number(((data.wagesAndSalaries / income) * 100).toFixed(2)) : 0,
+          grossProfitMargin: income > 0 ? Number(((data.grossProfit / income) * 100).toFixed(2)) : 0,
+        };
+      });
+
+    // --- Revenue breakdown (current week) ---
+    const grossRevenue = revenueBreakdown.map(r => ({
+      category: r.category,
+      label: REVENUE_CATEGORY_LABELS[r.category] ?? r.category,
+      amount: Number(r.amount),
+      isPassThrough: passThroughCategories.includes(r.category),
+    }));
+
+    const grossTotal = grossRevenue.reduce((s, r) => s + r.amount, 0);
+    const passThroughTotal = grossRevenue.filter(r => r.isPassThrough).reduce((s, r) => s + r.amount, 0);
+    const netTotal = grossTotal - passThroughTotal;
+
+    // --- Revenue Invoiced vs P&L comparison ---
+    const revenueInvoiced = projectsWeek.reduce((sum, p) => sum + Number(p.xeroInvoicedAmount), 0);
+    const revenuePL = financial ? Number(financial.totalTradingIncome) : null;
+
+    // --- Revenue trend (13 weeks, grouped by week with all categories) ---
+    const revTrendMap = new Map<string, Record<string, number>>();
+    for (const r of revenueTrend) {
+      const wk = (r.weekEnding as Date).toISOString().split('T')[0];
+      if (!revTrendMap.has(wk)) revTrendMap.set(wk, {});
+      const entry = revTrendMap.get(wk)!;
+      entry[r.category] = Number(r.amount);
+    }
+    const revenueTrendData = Array.from(revTrendMap.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([weekEnding, categories]) => ({ weekEnding, ...categories }));
+
+    // --- Cost analysis trend (13 weeks) ---
+    const last13 = financialTrend.filter(w => {
+      const d = new Date(w.weekEnding);
+      return d >= trendStart && d <= weekDate;
+    });
+    const costAnalysisTrend = last13.map(w => ({
+      weekEnding: (w.weekEnding as Date).toISOString().split('T')[0],
+      revenueToStaffRatio: w.revenueToStaffRatio,
+      wagesAndSalaries: Number(w.wagesAndSalaries),
+      totalTradingIncome: Number(w.totalTradingIncome),
+    }));
+
+    // --- Cash position ---
+    const cashData = cashPosition ? {
+      everydayAccount: Number(cashPosition.everydayAccount ?? 0),
+      overdraftLimit: Number(cashPosition.overdraftLimit ?? 0),
+      taxSavings: Number(cashPosition.taxSavings ?? 0),
+      capitalAccount: Number(cashPosition.capitalAccount ?? 0),
+      creditCards: Number(cashPosition.creditCards ?? 0),
+      totalCashAvailable: Number(cashPosition.totalCashAvailable ?? 0),
+    } : null;
+
+    // --- Aged receivables ---
+    const receivables = cashPosition ? {
+      totalReceivables: Number(cashPosition.totalReceivables ?? 0),
+      current: Number(cashPosition.currentReceivables ?? 0),
+      over30Days: Number(cashPosition.over30Days ?? 0),
+      over60Days: Number(cashPosition.over60Days ?? 0),
+      over90Days: Number(cashPosition.over90Days ?? 0),
+      totalPayables: Number(cashPosition.totalPayables ?? 0),
+    } : null;
+
+    // --- Upcoming liabilities ---
+    const liabilityData = liabilities.map(l => ({
+      id: l.id,
+      description: l.description,
+      amount: Number(l.amount),
+      dueDate: l.dueDate.toISOString().split('T')[0],
+      type: l.liabilityType,
+    }));
+
+    res.json({
+      weekEnding: weekDate.toISOString().split('T')[0],
+      hasData: !!financial,
+      plWeekly,
+      plMonthly,
+      revenueBreakdown: {
+        categories: grossRevenue,
+        grossTotal: Number(grossTotal.toFixed(2)),
+        passThroughTotal: Number(passThroughTotal.toFixed(2)),
+        netTotal: Number(netTotal.toFixed(2)),
+        passThroughCategories,
+      },
+      revenueComparison: {
+        invoiced: Number(revenueInvoiced.toFixed(2)),
+        pl: revenuePL,
+        variance: revenuePL != null ? Number((revenuePL - revenueInvoiced).toFixed(2)) : null,
+      },
+      costAnalysisTrend,
+      revenueTrend: revenueTrendData,
+      cashPosition: cashData,
+      agedReceivables: receivables,
+      upcomingLiabilities: liabilityData,
+    });
+  } catch (err) { next(err); }
+});
+
 export default router;

@@ -114,8 +114,101 @@ export interface ExecutiveSummaryData {
   };
 }
 
-// ─── API Call ─────────────────────────────────────────────────────────────────
+// ─── Financial Deep Dive Types ────────────────────────────────────────────────
+
+export interface PLWeekly {
+  totalTradingIncome: number;
+  totalCostOfSales: number;
+  grossProfit: number;
+  otherIncome: number;
+  operatingExpenses: number;
+  wagesAndSalaries: number;
+  netProfit: number;
+  budget: number | null;
+  profitPercentage: number;
+  revenueToStaffRatio: number;
+  grossProfitMargin: number;
+}
+
+export interface PLMonthly extends PLWeekly {
+  month: string;
+  weekCount: number;
+}
+
+export interface RevenueCategoryRow {
+  category: string;
+  label: string;
+  amount: number;
+  isPassThrough: boolean;
+}
+
+export interface RevenueBreakdownData {
+  categories: RevenueCategoryRow[];
+  grossTotal: number;
+  passThroughTotal: number;
+  netTotal: number;
+  passThroughCategories: string[];
+}
+
+export interface RevenueComparison {
+  invoiced: number;
+  pl: number | null;
+  variance: number | null;
+}
+
+export interface CostAnalysisPoint {
+  weekEnding: string;
+  revenueToStaffRatio: number;
+  wagesAndSalaries: number;
+  totalTradingIncome: number;
+}
+
+export interface CashPositionData {
+  everydayAccount: number;
+  overdraftLimit: number;
+  taxSavings: number;
+  capitalAccount: number;
+  creditCards: number;
+  totalCashAvailable: number;
+}
+
+export interface AgedReceivablesData {
+  totalReceivables: number;
+  current: number;
+  over30Days: number;
+  over60Days: number;
+  over90Days: number;
+  totalPayables: number;
+}
+
+export interface LiabilityRow {
+  id: number;
+  description: string;
+  amount: number;
+  dueDate: string;
+  type: string;
+}
+
+export interface FinancialDeepDiveData {
+  weekEnding: string;
+  hasData: boolean;
+  plWeekly: PLWeekly | null;
+  plMonthly: PLMonthly[];
+  revenueBreakdown: RevenueBreakdownData;
+  revenueComparison: RevenueComparison;
+  costAnalysisTrend: CostAnalysisPoint[];
+  revenueTrend: Record<string, any>[];
+  cashPosition: CashPositionData | null;
+  agedReceivables: AgedReceivablesData | null;
+  upcomingLiabilities: LiabilityRow[];
+}
+
+// ─── API Calls ────────────────────────────────────────────────────────────────
 
 export async function fetchExecutiveSummary(weekEnding: string): Promise<ExecutiveSummaryData> {
   return request(`${BASE}/executive-summary?weekEnding=${weekEnding}`);
+}
+
+export async function fetchFinancialDeepDive(weekEnding: string): Promise<FinancialDeepDiveData> {
+  return request(`${BASE}/financial-deep-dive?weekEnding=${weekEnding}`);
 }

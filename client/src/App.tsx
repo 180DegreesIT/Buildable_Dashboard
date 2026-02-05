@@ -4,6 +4,7 @@ import Sidebar, { type PageId } from './components/layout/Sidebar';
 import TopBar from './components/layout/TopBar';
 import PlaceholderPage from './components/layout/PlaceholderPage';
 import ExecutiveSummary from './components/dashboard/ExecutiveSummary';
+import FinancialDeepDive from './components/dashboard/FinancialDeepDive';
 import UploadWizard from './components/upload/UploadWizard';
 import UploadHistory from './components/upload/UploadHistory';
 
@@ -39,12 +40,7 @@ function App() {
           <main className="flex-1 overflow-y-auto px-8 py-6">
             {activePage === 'executive_summary' && <ExecutiveSummary />}
 
-            {activePage === 'financial' && (
-              <PlaceholderPage
-                title="Financial Deep Dive"
-                description="Detailed P&L breakdown and financial metrics. Coming in Task 10."
-              />
-            )}
+            {activePage === 'financial' && <FinancialDeepDive />}
 
             {activePage === 'regional_performance' && (
               <PlaceholderPage
