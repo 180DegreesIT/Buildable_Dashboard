@@ -212,3 +212,36 @@ export async function fetchExecutiveSummary(weekEnding: string): Promise<Executi
 export async function fetchFinancialDeepDive(weekEnding: string): Promise<FinancialDeepDiveData> {
   return request(`${BASE}/financial-deep-dive?weekEnding=${weekEnding}`);
 }
+
+// ─── Regional Performance Types ───────────────────────────────────────────────
+
+export interface RegionalTeam {
+  region: string;
+  label: string;
+  actual: number;
+  target: number;
+  percentageToTarget: number;
+  variance: number;
+  color: 'green' | 'amber' | 'red';
+}
+
+export interface RegionalDrillDownRow {
+  weekEnding: string;
+  actual: number;
+  target: number;
+  pct: number;
+}
+
+export interface RegionalPerformanceData {
+  weekEnding: string;
+  hasData: boolean;
+  teams: RegionalTeam[];
+  trend: Record<string, any>[];
+  targets: Record<string, number>;
+  drillDown: Record<string, RegionalDrillDownRow[]>;
+  regionLabels: Record<string, string>;
+}
+
+export async function fetchRegionalPerformance(weekEnding: string): Promise<RegionalPerformanceData> {
+  return request(`${BASE}/regional-performance?weekEnding=${weekEnding}`);
+}

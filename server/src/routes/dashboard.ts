@@ -498,4 +498,101 @@ router.get('/financial-deep-dive', validateQuery(schemas.weekEndingQuery), async
   } catch (err) { next(err); }
 });
 
+/**
+ * GET /regional-performance?weekEnding=YYYY-MM-DD
+ * Returns all data for the Regional Performance page.
+ */
+router.get('/regional-performance', validateQuery(schemas.weekEndingQuery), async (req, res, next) => {
+  try {
+    const { weekEnding } = (req as any).validated;
+    const weekDate = new Date(weekEnding);
+
+    // 13-week window
+    const trendStart = new Date(weekDate);
+    trendStart.setDate(trendStart.getDate() - 12 * 7);
+
+    const [teamActuals, teamTrend] = await Promise.all([
+      // Current week: all teams
+      prisma.teamPerformanceWeekly.findMany({
+        where: { weekEnding: weekDate },
+        orderBy: { region: 'asc' },
+      }),
+      // 13-week trend: all teams
+      prisma.teamPerformanceWeekly.findMany({
+        where: { weekEnding: { gte: trendStart, lte: weekDate } },
+        orderBy: [{ weekEnding: 'asc' }, { region: 'asc' }],
+      }),
+    ]);
+
+    // Resolve targets for each team
+    const teams = await Promise.all(
+      ALL_REGIONS.map(async (region) => {
+        const actual = teamActuals.find(t => t.region === region);
+        const target = await TargetService.getTargetForWeek('team_revenue', weekDate, region);
+        const actualAmount = actual ? Number(actual.actualInvoiced) : 0;
+        const targetAmount = target ? Number(target.amount) : 0;
+        const pct = targetAmount > 0 ? Number(((actualAmount / targetAmount) * 100).toFixed(1)) : 0;
+
+        return {
+          region,
+          label: REGION_LABELS[region],
+          actual: actualAmount,
+          target: targetAmount,
+          percentageToTarget: pct,
+          variance: Number((actualAmount - targetAmount).toFixed(2)),
+          color: pct >= 80 ? 'green' : pct >= 50 ? 'amber' : 'red',
+        };
+      })
+    );
+
+    // Build trend data: { weekEnding, [region]: actualInvoiced }
+    // Also collect targets per region for dashed lines
+    const trendMap = new Map<string, Record<string, number>>();
+    for (const row of teamTrend) {
+      const wk = (row.weekEnding as Date).toISOString().split('T')[0];
+      if (!trendMap.has(wk)) trendMap.set(wk, {});
+      const entry = trendMap.get(wk)!;
+      entry[row.region] = Number(row.actualInvoiced);
+    }
+
+    const trendData = Array.from(trendMap.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([weekEnding, values]) => ({ weekEnding, ...values }));
+
+    // Targets per region (for chart reference lines)
+    const targetMap: Record<string, number> = {};
+    for (const t of teams) {
+      targetMap[t.region] = t.target;
+    }
+
+    // Drill-down: weekly detail per team (13-week window)
+    const drillDown: Record<string, Array<{ weekEnding: string; actual: number; target: number; pct: number }>> = {};
+    for (const region of ALL_REGIONS) {
+      const regionRows = teamTrend.filter(r => r.region === region);
+      const target = await TargetService.getTargetForWeek('team_revenue', weekDate, region);
+      const targetAmt = target ? Number(target.amount) : 0;
+
+      drillDown[region] = regionRows.map(r => {
+        const actual = Number(r.actualInvoiced);
+        return {
+          weekEnding: (r.weekEnding as Date).toISOString().split('T')[0],
+          actual,
+          target: targetAmt,
+          pct: targetAmt > 0 ? Number(((actual / targetAmt) * 100).toFixed(1)) : 0,
+        };
+      });
+    }
+
+    res.json({
+      weekEnding: weekDate.toISOString().split('T')[0],
+      hasData: teamActuals.length > 0,
+      teams,
+      trend: trendData,
+      targets: targetMap,
+      drillDown,
+      regionLabels: REGION_LABELS,
+    });
+  } catch (err) { next(err); }
+});
+
 export default router;

@@ -5,6 +5,7 @@ import TopBar from './components/layout/TopBar';
 import PlaceholderPage from './components/layout/PlaceholderPage';
 import ExecutiveSummary from './components/dashboard/ExecutiveSummary';
 import FinancialDeepDive from './components/dashboard/FinancialDeepDive';
+import RegionalPerformance from './components/dashboard/RegionalPerformance';
 import UploadWizard from './components/upload/UploadWizard';
 import UploadHistory from './components/upload/UploadHistory';
 
@@ -42,12 +43,7 @@ function App() {
 
             {activePage === 'financial' && <FinancialDeepDive />}
 
-            {activePage === 'regional_performance' && (
-              <PlaceholderPage
-                title="Regional Performance"
-                description="Team performance vs targets by region. Coming in Task 11."
-              />
-            )}
+            {activePage === 'regional_performance' && <RegionalPerformance />}
 
             {activePage === 'data_management' && (
               <div>
