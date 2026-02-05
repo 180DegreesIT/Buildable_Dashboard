@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { errorHandler } from './middleware/errorHandler.js';
+import { authenticate } from './middleware/auth.js';
+import authRoutes from './routes/auth.js';
 import financialRoutes from './routes/financial.js';
 import projectsRoutes from './routes/projects.js';
 import salesRoutes from './routes/sales.js';
@@ -19,12 +21,18 @@ const PORT = process.env.PORT || 6001;
 app.use(cors());
 app.use(express.json());
 
-// Health check
+// Health check (no auth required)
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
-// API v1 routes
+// Auth routes (no auth middleware — these handle login/callback)
+app.use('/api/v1/auth', authRoutes);
+
+// Apply auth middleware to all /api/v1/ routes below
+app.use('/api/v1', authenticate);
+
+// API v1 routes (auth required)
 app.use('/api/v1/financial', financialRoutes);
 app.use('/api/v1/projects', projectsRoutes);
 app.use('/api/v1/sales', salesRoutes);
