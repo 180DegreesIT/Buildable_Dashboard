@@ -1,17 +1,103 @@
 import { Router } from 'express';
 import { z } from 'zod';
+import multer from 'multer';
 import prisma from '../db.js';
 import { validateQuery, validateBody } from '../middleware/validation.js';
 import { ApiError } from '../middleware/errorHandler.js';
+import { parseCsv, validateRows, detectDuplicates, type FieldMapping } from '../services/CsvParserService.js';
 
 const router = Router();
 
-// POST /parse — Parse CSV and return headers + preview rows (placeholder — full impl in Task 4)
-router.post('/parse', async (_req, res, next) => {
+// Multer config: 10MB max, memory storage
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowed = ['.csv', '.tsv', 'text/csv', 'text/tab-separated-values', 'application/vnd.ms-excel'];
+    const ext = file.originalname.toLowerCase().split('.').pop();
+    if (ext === 'csv' || ext === 'tsv' || allowed.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only .csv and .tsv files are accepted'));
+    }
+  },
+});
+
+// POST /parse — Parse CSV and return headers + preview rows + type inference
+router.post('/parse', upload.single('file'), async (req, res, next) => {
   try {
-    res.status(501).json({ error: { message: 'CSV parsing not yet implemented (Task 4)', statusCode: 501 } });
+    if (!req.file) {
+      return next(ApiError.badRequest('No file uploaded. Send a CSV file as multipart form data with field name "file".'));
+    }
+
+    const result = parseCsv(req.file.buffer);
+
+    res.json({
+      fileName: req.file.originalname,
+      fileSize: req.file.size,
+      ...result,
+    });
   } catch (err) { next(err); }
 });
+
+// POST /validate — Validate parsed CSV data against a field mapping
+const validateSchema = z.object({
+  rows: z.array(z.record(z.string())),
+  mappings: z.array(z.object({
+    csvHeader: z.string(),
+    dbField: z.string(),
+    expectedType: z.enum(['date', 'currency', 'integer', 'decimal', 'percentage', 'text']),
+    required: z.boolean(),
+  })),
+  weekEndingField: z.string().optional(),
+  targetTable: z.string().optional(),
+});
+
+router.post('/validate', validateBody(validateSchema), async (req, res, next) => {
+  try {
+    const { rows, mappings, weekEndingField, targetTable } = (req as any).validated;
+
+    const validation = validateRows(rows, mappings as FieldMapping[], weekEndingField);
+
+    // Duplicate detection if weekEndingField and targetTable provided
+    let duplicates: any[] = [];
+    if (weekEndingField && targetTable) {
+      // Get existing week_ending dates from the target table
+      const existingWeeks = await getExistingWeeks(targetTable);
+      duplicates = await detectDuplicates(validation.rows, weekEndingField, existingWeeks);
+    }
+
+    res.json({
+      ...validation,
+      duplicates,
+    });
+  } catch (err) { next(err); }
+});
+
+/**
+ * Query existing week_ending dates from a target table for duplicate detection.
+ */
+async function getExistingWeeks(tableName: string): Promise<Date[]> {
+  const tableMap: Record<string, () => Promise<Date[]>> = {
+    financial_weekly: async () => (await prisma.financialWeekly.findMany({ select: { weekEnding: true } })).map(r => r.weekEnding),
+    revenue_weekly: async () => [...new Set((await prisma.revenueWeekly.findMany({ select: { weekEnding: true } })).map(r => r.weekEnding))],
+    projects_weekly: async () => [...new Set((await prisma.projectsWeekly.findMany({ select: { weekEnding: true } })).map(r => r.weekEnding))],
+    sales_weekly: async () => [...new Set((await prisma.salesWeekly.findMany({ select: { weekEnding: true } })).map(r => r.weekEnding))],
+    sales_regional_weekly: async () => [...new Set((await prisma.salesRegionalWeekly.findMany({ select: { weekEnding: true } })).map(r => r.weekEnding))],
+    team_performance_weekly: async () => [...new Set((await prisma.teamPerformanceWeekly.findMany({ select: { weekEnding: true } })).map(r => r.weekEnding))],
+    leads_weekly: async () => [...new Set((await prisma.leadsWeekly.findMany({ select: { weekEnding: true } })).map(r => r.weekEnding))],
+    marketing_performance_weekly: async () => [...new Set((await prisma.marketingPerformanceWeekly.findMany({ select: { weekEnding: true } })).map(r => r.weekEnding))],
+    website_analytics_weekly: async () => (await prisma.websiteAnalyticsWeekly.findMany({ select: { weekEnding: true } })).map(r => r.weekEnding),
+    staff_productivity_weekly: async () => [...new Set((await prisma.staffProductivityWeekly.findMany({ select: { weekEnding: true } })).map(r => r.weekEnding))],
+    phone_weekly: async () => [...new Set((await prisma.phoneWeekly.findMany({ select: { weekEnding: true } })).map(r => r.weekEnding))],
+    cash_position_weekly: async () => (await prisma.cashPositionWeekly.findMany({ select: { weekEnding: true } })).map(r => r.weekEnding),
+    google_reviews_weekly: async () => (await prisma.googleReviewsWeekly.findMany({ select: { weekEnding: true } })).map(r => r.weekEnding),
+  };
+
+  const fetcher = tableMap[tableName];
+  if (!fetcher) return [];
+  return fetcher();
+}
 
 // POST /import — Commit mapped data to database (placeholder — full impl in Task 6)
 router.post('/import', async (_req, res, next) => {
