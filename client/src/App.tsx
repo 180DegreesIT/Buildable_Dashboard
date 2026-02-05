@@ -3,6 +3,7 @@ import { WeekProvider } from './lib/WeekContext';
 import Sidebar, { type PageId } from './components/layout/Sidebar';
 import TopBar from './components/layout/TopBar';
 import PlaceholderPage from './components/layout/PlaceholderPage';
+import ExecutiveSummary from './components/dashboard/ExecutiveSummary';
 import UploadWizard from './components/upload/UploadWizard';
 import UploadHistory from './components/upload/UploadHistory';
 
@@ -36,12 +37,7 @@ function App() {
           <TopBar />
 
           <main className="flex-1 overflow-y-auto px-8 py-6">
-            {activePage === 'executive_summary' && (
-              <PlaceholderPage
-                title="Executive Summary"
-                description="The main dashboard view with KPI cards, charts, and tables. Coming in Task 9."
-              />
-            )}
+            {activePage === 'executive_summary' && <ExecutiveSummary />}
 
             {activePage === 'financial' && (
               <PlaceholderPage

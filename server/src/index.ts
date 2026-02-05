@@ -12,6 +12,7 @@ import marketingRoutes from './routes/marketing.js';
 import targetsRoutes from './routes/targets.js';
 import uploadsRoutes from './routes/uploads.js';
 import weeksRoutes from './routes/weeks.js';
+import dashboardRoutes from './routes/dashboard.js';
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use('/api/v1/marketing', marketingRoutes);
 app.use('/api/v1/targets', targetsRoutes);
 app.use('/api/v1/uploads', uploadsRoutes);
 app.use('/api/v1/weeks', weeksRoutes);
+app.use('/api/v1/dashboard', dashboardRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);
