@@ -1,49 +1,121 @@
 import { useState } from 'react';
+import { WeekProvider } from './lib/WeekContext';
+import Sidebar, { type PageId } from './components/layout/Sidebar';
+import TopBar from './components/layout/TopBar';
+import PlaceholderPage from './components/layout/PlaceholderPage';
 import UploadWizard from './components/upload/UploadWizard';
 import UploadHistory from './components/upload/UploadHistory';
 
-type Page = 'upload' | 'history';
+type DataManagementView = 'upload' | 'history';
 
 function App() {
-  const [page, setPage] = useState<Page>('upload');
+  const [activePage, setActivePage] = useState<PageId>('executive_summary');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [dataView, setDataView] = useState<DataManagementView>('upload');
+
+  function handleNavigate(page: PageId) {
+    setActivePage(page);
+    if (page === 'data_management') {
+      setDataView('upload');
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB]">
-      {/* Top bar */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-6 flex items-center justify-between h-14">
-          <h1 className="text-lg font-semibold text-[#1A1A2E]">Buildable Dashboard</h1>
-          <nav className="flex items-center gap-1">
-            <button
-              onClick={() => setPage('upload')}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                page === 'upload'
-                  ? 'bg-indigo-50 text-indigo-700'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              Upload Data
-            </button>
-            <button
-              onClick={() => setPage('history')}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                page === 'history'
-                  ? 'bg-indigo-50 text-indigo-700'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              Upload History
-            </button>
-          </nav>
-        </div>
-      </header>
+    <WeekProvider>
+      <div className="h-screen flex bg-[#F9FAFB]">
+        {/* Sidebar */}
+        <Sidebar
+          activePage={activePage}
+          onNavigate={handleNavigate}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed((c) => !c)}
+        />
 
-      {/* Content */}
-      <main className="px-6 py-8">
-        {page === 'upload' && <UploadWizard onNavigateHistory={() => setPage('history')} />}
-        {page === 'history' && <UploadHistory onNavigateUpload={() => setPage('upload')} />}
-      </main>
-    </div>
+        {/* Main area */}
+        <div className="flex-1 flex flex-col min-w-0">
+          <TopBar />
+
+          <main className="flex-1 overflow-y-auto px-8 py-6">
+            {activePage === 'executive_summary' && (
+              <PlaceholderPage
+                title="Executive Summary"
+                description="The main dashboard view with KPI cards, charts, and tables. Coming in Task 9."
+              />
+            )}
+
+            {activePage === 'financial' && (
+              <PlaceholderPage
+                title="Financial Deep Dive"
+                description="Detailed P&L breakdown and financial metrics. Coming in Task 10."
+              />
+            )}
+
+            {activePage === 'regional_performance' && (
+              <PlaceholderPage
+                title="Regional Performance"
+                description="Team performance vs targets by region. Coming in Task 11."
+              />
+            )}
+
+            {activePage === 'data_management' && (
+              <div>
+                {/* Sub-nav for data management */}
+                <div className="flex items-center gap-1 mb-6">
+                  <button
+                    onClick={() => setDataView('upload')}
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                      dataView === 'upload'
+                        ? 'bg-[#4573D2]/10 text-[#4573D2]'
+                        : 'text-[#6B7280] hover:text-gray-900 hover:bg-gray-100'
+                    }`}
+                  >
+                    Upload Data
+                  </button>
+                  <button
+                    onClick={() => setDataView('history')}
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                      dataView === 'history'
+                        ? 'bg-[#4573D2]/10 text-[#4573D2]'
+                        : 'text-[#6B7280] hover:text-gray-900 hover:bg-gray-100'
+                    }`}
+                  >
+                    Upload History
+                  </button>
+                </div>
+
+                {dataView === 'upload' && (
+                  <UploadWizard onNavigateHistory={() => setDataView('history')} />
+                )}
+                {dataView === 'history' && (
+                  <UploadHistory onNavigateUpload={() => setDataView('upload')} />
+                )}
+              </div>
+            )}
+
+            {activePage === 'target_management' && (
+              <PlaceholderPage
+                title="Target Management"
+                description="Set and manage targets for net profit, revenue, and team performance. Coming in Task 12."
+              />
+            )}
+
+            {activePage === 'admin_settings' && (
+              <PlaceholderPage
+                title="Admin Settings"
+                description="System configuration and settings. Coming in Task 13."
+              />
+            )}
+
+            {activePage === 'user_management' && (
+              <PlaceholderPage
+                title="User Management"
+                description="Manage users, roles, and page-level permissions. Coming in Task 13."
+              />
+            )}
+          </main>
+        </div>
+      </div>
+    </WeekProvider>
   );
 }
 
