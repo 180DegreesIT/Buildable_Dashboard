@@ -6,6 +6,7 @@ import { validateQuery, validateBody } from '../middleware/validation.js';
 import { ApiError } from '../middleware/errorHandler.js';
 import { parseCsv, validateRows, detectDuplicates, type FieldMapping } from '../services/CsvParserService.js';
 import { DataTypeRegistry } from '../services/DataTypeRegistry.js';
+import { importRows, rollbackUpload, type DuplicateStrategy } from '../services/ImportService.js';
 
 const router = Router();
 
@@ -283,10 +284,43 @@ async function getExistingWeeks(tableName: string): Promise<Date[]> {
   return fetcher();
 }
 
-// POST /import — Commit mapped data to database (placeholder — full impl in Task 6)
-router.post('/import', async (_req, res, next) => {
+// ─── Import ───────────────────────────────────────────────────────────────────
+
+// POST /import — Commit validated rows to the database
+const importSchema = z.object({
+  dataTypeId: z.string().min(1),
+  fileName: z.string().min(1),
+  mappingId: z.number().int().positive().optional(),
+  rows: z.array(z.object({
+    rowIndex: z.number(),
+    status: z.enum(['pass', 'warning', 'error']),
+    messages: z.array(z.string()),
+    data: z.record(z.any()),
+    original: z.record(z.string()),
+  })),
+  duplicateStrategy: z.enum(['overwrite', 'skip', 'merge']).default('skip'),
+});
+
+router.post('/import', validateBody(importSchema), async (req, res, next) => {
   try {
-    res.status(501).json({ error: { message: 'CSV import not yet implemented (Task 6)', statusCode: 501 } });
+    const { dataTypeId, fileName, mappingId, rows, duplicateStrategy } = (req as any).validated;
+
+    const dt = DataTypeRegistry.getById(dataTypeId);
+    if (!dt) return next(ApiError.notFound(`Data type "${dataTypeId}" not found`));
+
+    const user = (req as any).user;
+
+    const result = await importRows({
+      dataType: dt,
+      fileName,
+      mappingId,
+      rows,
+      duplicateStrategy: duplicateStrategy as DuplicateStrategy,
+      uploadedBy: user?.displayName ?? user?.email ?? undefined,
+    });
+
+    const statusCode = result.status === 'completed' ? 200 : 500;
+    res.status(statusCode).json(result);
   } catch (err) { next(err); }
 });
 
@@ -319,17 +353,22 @@ router.get('/history', validateQuery(historySchema), async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// POST /:id/rollback — Rollback an upload (placeholder — full impl in Task 6)
+// POST /:id/rollback — Rollback an upload
 router.post('/:id/rollback', async (req, res, next) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (isNaN(id)) return next(ApiError.badRequest('Invalid upload ID'));
 
-    const upload = await prisma.csvUpload.findUnique({ where: { id } });
-    if (!upload) return next(ApiError.notFound('Upload not found'));
-
-    res.status(501).json({ error: { message: 'Rollback not yet implemented (Task 6)', statusCode: 501 } });
-  } catch (err) { next(err); }
+    const result = await rollbackUpload(id);
+    res.json(result);
+  } catch (err: any) {
+    // Surface known rollback errors as 400/404
+    if (err.message === 'Upload not found') return next(ApiError.notFound(err.message));
+    if (err.message.includes('already been rolled back') || err.message.includes('Cannot rollback') || err.message.includes('No rollback data')) {
+      return next(ApiError.badRequest(err.message));
+    }
+    next(err);
+  }
 });
 
 // GET /mappings — List saved column mappings
