@@ -77,10 +77,11 @@ Plans:
   3. Week 30 lead source data matches Excel (Google: 70, SEO: 118, Total: ~257)
   4. CSV round-trip works: export data as CSV, reimport via upload wizard, data matches original
   5. Executive Summary page loads in under 2 seconds with 30 weeks of historical data in the database
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 04-01: Seed data, validation scripts, performance testing, and target workflow verification
+- [ ] 04-01-PLAN.md -- Reference value extraction from Excel, ValidationService with API-level comparison, validation API route
+- [ ] 04-02-PLAN.md -- Performance benchmark (Puppeteer), CSV round-trip test, target workflow test, ValidationPanel UI in admin settings
 
 ## Progress
 
@@ -92,4 +93,4 @@ Phases 1 and 2 run in parallel (no dependencies between them). Phase 3 follows P
 | 1. Admin & User Management | 2/2 | Complete | 2026-02-06 |
 | 2. Excel Data Migration | 2/2 | Complete | 2026-02-06 |
 | 3. Export & Xero Integration | 3/3 | Complete | 2026-02-06 |
-| 4. Validation & Go-Live | 0/1 | Not started | - |
+| 4. Validation & Go-Live | 0/2 | Not started | - |
