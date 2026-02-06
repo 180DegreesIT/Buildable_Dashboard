@@ -19,6 +19,7 @@ import usersRoutes from './routes/users.js';
 import migrationRoutes from './routes/migration.js';
 import xeroRoutes from './routes/xero.js';
 import exportsRoutes from './routes/exports.js';
+import validationRoutes from './routes/validation.js';
 
 dotenv.config();
 
@@ -57,6 +58,7 @@ app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/migration', migrationRoutes);
 app.use('/api/v1/xero', xeroRoutes);
 app.use('/api/v1/exports', exportsRoutes);
+app.use('/api/v1/validation', validationRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);
