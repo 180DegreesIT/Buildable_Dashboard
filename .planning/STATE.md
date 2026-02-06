@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-06)
 
 **Core value:** April can upload weekly data and directors see accurate, reliable financial and operational reports
-**Current focus:** Phase 3 in progress (Export & Xero Integration). Plan 01 (CSV Export) complete. Plans 02-03 next.
+**Current focus:** Phase 3 nearing completion (Export & Xero Integration). Plans 01 and 03 complete. Plan 02 (PDF export) remaining.
 
 ## Current Position
 
-Phase: 3 of 4 (Export & Xero Integration) — IN PROGRESS
-Plan: 1 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-06 -- Completed 03-01-PLAN.md (CSV export system)
+Phase: 3 of 4 (Export & Xero Integration) -- IN PROGRESS
+Plan: 2 of 3 complete in current phase (03-01 CSV export, 03-03 Xero integration)
+Status: In progress (03-02 PDF export remaining)
+Last activity: 2026-02-06 -- Completed 03-03-PLAN.md (Xero integration scaffold)
 
-Progress: [███████░░░] 65%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: ~11 min
-- Total execution time: ~0.9 hours
+- Total plans completed: 6
+- Average duration: ~12 min
+- Total execution time: ~1.1 hours
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [███████░░░] 65%
 |-------|-------|-------|----------|
 | 1 | 2/2 | 26m | 13m |
 | 2 | 2/2 | 23m | ~12m |
-| 3 | 1/3 | 6m | 6m |
+| 3 | 2/3 | 22m | 11m |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (11m), 02-01 (13m), 02-02 (~10m), 03-01 (6m)
-- Trend: Accelerating (03-01 was a fast client-only plan)
+- Last 5 plans: 02-01 (13m), 02-02 (~10m), 03-01 (6m), 03-03 (16m)
+- Trend: Stable (~12m average, variance based on scope)
 
 *Updated after each plan completion*
 
@@ -68,6 +68,13 @@ Recent decisions affecting current work:
 - [03-01]: AUD_FORMATTER outputs plain toFixed(2) numbers for Excel compatibility
 - [03-01]: Each page exports its primary data table (not all tables combined)
 - [03-01]: ExportButtons uses callback prop pattern (parent owns data + column definitions)
+- [03-03]: Mock mode defaults to true when XERO_MOCK_MODE not set (safe development default)
+- [03-03]: AES-256-GCM token encryption with random IV per encryption (iv:authTag:ciphertext hex format)
+- [03-03]: Direct Xero API fetch for token exchange instead of SDK (avoids version coupling)
+- [03-03]: Refresh token mutex prevents concurrent refresh attempts
+- [03-03]: Separate xeroApi.ts client library (not merged into settingsApi.ts)
+- [03-03]: Rate limiter uses 55/min headroom and 4800/day safety margin
+- [03-03]: Realistic mock data ranges match Buildable financial structure
 
 ### Pending Todos
 
@@ -75,12 +82,12 @@ None yet.
 
 ### Blockers/Concerns
 
-- Xero developer app credentials pending from 180D -- scaffold with mock mode, cannot test live OAuth2 flow
+- Xero developer app credentials pending from 180D -- scaffold complete with mock mode, ready to activate when credentials arrive
 - Azure AD app registration pending from 180D -- dev auth bypass in place
-- Puppeteer Windows 11 compatibility -- verify Chromium binary download during Phase 3 PDF plan
+- Puppeteer Windows 11 compatibility -- verify Chromium binary download during Phase 3 PDF plan (03-02)
 
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 03-01-PLAN.md (CSV export system)
+Stopped at: Completed 03-03-PLAN.md (Xero integration scaffold with mock mode)
 Resume file: None
