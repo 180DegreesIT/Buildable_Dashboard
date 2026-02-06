@@ -16,20 +16,20 @@
 
 ### Admin Settings
 
-- [ ] **ADMN-01**: Branding config UI (upload logo, set company name, primary/accent colour)
-- [ ] **ADMN-02**: Branding changes reflect immediately in app header and PDF exports
-- [ ] **ADMN-03**: Pass-through items list (add/remove items, used by Net Revenue toggle on financial views)
-- [ ] **ADMN-04**: Alert threshold configuration (net profit below budget X weeks, team below X%, cash approaching overdraft within $X)
-- [ ] **ADMN-05**: System status cards (Xero connection status, 3CX placeholder, Reportei placeholder)
-- [ ] **ADMN-06**: Backup status display (last backup timestamp, informational)
+- [x] **ADMN-01**: Branding config UI (upload logo, set company name, primary/accent colour)
+- [x] **ADMN-02**: Branding changes reflect immediately in app header and PDF exports
+- [x] **ADMN-03**: Pass-through items list (add/remove items, used by Net Revenue toggle on financial views)
+- [x] **ADMN-04**: Alert threshold configuration (net profit below budget X weeks, team below X%, cash approaching overdraft within $X)
+- [x] **ADMN-05**: System status cards (Xero connection status, 3CX placeholder, Reportei placeholder)
+- [x] **ADMN-06**: Backup status display (last backup timestamp, informational)
 
 ### User Management
 
-- [ ] **USER-01**: User list table showing display name, email, role, active/inactive status, last login
-- [ ] **USER-02**: Role assignment via dropdown (Super Admin, Executive, Manager, Staff)
-- [ ] **USER-03**: Permission matrix grid — users as rows, pages as columns, toggle Read/Write/No Access per cell
-- [ ] **USER-04**: Changing role updates default permissions (Super Admin = full access, Staff = minimal)
-- [ ] **USER-05**: Dev mode manual user creation for testing
+- [x] **USER-01**: User list table showing display name, email, role, active/inactive status, last login
+- [x] **USER-02**: Role assignment via dropdown (Super Admin, Executive, Manager, Staff)
+- [x] **USER-03**: Permission matrix grid — users as rows, pages as columns, toggle Read/Write/No Access per cell
+- [x] **USER-04**: Changing role updates default permissions (Super Admin = full access, Staff = minimal)
+- [x] **USER-05**: Dev mode manual user creation for testing
 
 ### PDF & CSV Export
 
@@ -105,17 +105,17 @@
 | MIGR-04 | Phase 2 | Pending |
 | MIGR-05 | Phase 2 | Pending |
 | MIGR-06 | Phase 2 | Pending |
-| ADMN-01 | Phase 1 | Pending |
-| ADMN-02 | Phase 1 | Pending |
-| ADMN-03 | Phase 1 | Pending |
-| ADMN-04 | Phase 1 | Pending |
-| ADMN-05 | Phase 1 | Pending |
-| ADMN-06 | Phase 1 | Pending |
-| USER-01 | Phase 1 | Pending |
-| USER-02 | Phase 1 | Pending |
-| USER-03 | Phase 1 | Pending |
-| USER-04 | Phase 1 | Pending |
-| USER-05 | Phase 1 | Pending |
+| ADMN-01 | Phase 1 | Complete |
+| ADMN-02 | Phase 1 | Complete |
+| ADMN-03 | Phase 1 | Complete |
+| ADMN-04 | Phase 1 | Complete |
+| ADMN-05 | Phase 1 | Complete |
+| ADMN-06 | Phase 1 | Complete |
+| USER-01 | Phase 1 | Complete |
+| USER-02 | Phase 1 | Complete |
+| USER-03 | Phase 1 | Complete |
+| USER-04 | Phase 1 | Complete |
+| USER-05 | Phase 1 | Complete |
 | EXPRT-01 | Phase 3 | Pending |
 | EXPRT-02 | Phase 3 | Pending |
 | EXPRT-03 | Phase 3 | Pending |
@@ -145,4 +145,4 @@
 
 ---
 *Requirements defined: 2026-02-06*
-*Last updated: 2026-02-06 after roadmap creation (all 33 requirements mapped to phases)*
+*Last updated: 2026-02-06 after Phase 1 completion (11 requirements complete, 22 pending)*
