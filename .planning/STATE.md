@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-06)
 
 **Core value:** April can upload weekly data and directors see accurate, reliable financial and operational reports
-**Current focus:** Phase 2 complete. Phase 3 next (Export & Xero Integration).
+**Current focus:** Phase 3 in progress (Export & Xero Integration). Plan 01 (CSV Export) complete. Plans 02-03 next.
 
 ## Current Position
 
-Phase: 2 of 4 (Excel Data Migration) — COMPLETE
-Plan: 2 of 2 in current phase
-Status: Complete
-Last activity: 2026-02-06 -- Completed 02-02-PLAN.md (frontend migration UI, user-verified)
+Phase: 3 of 4 (Export & Xero Integration) — IN PROGRESS
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-06 -- Completed 03-01-PLAN.md (CSV export system)
 
-Progress: [██████░░░░] 55%
+Progress: [███████░░░] 65%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: ~12 min
-- Total execution time: ~0.8 hours
+- Total plans completed: 5
+- Average duration: ~11 min
+- Total execution time: ~0.9 hours
 
 **By Phase:**
 
@@ -29,10 +29,11 @@ Progress: [██████░░░░] 55%
 |-------|-------|-------|----------|
 | 1 | 2/2 | 26m | 13m |
 | 2 | 2/2 | 23m | ~12m |
+| 3 | 1/3 | 6m | 6m |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (15m), 01-02 (11m), 02-01 (13m), 02-02 (~10m)
-- Trend: Stable (~12m per plan)
+- Last 5 plans: 01-02 (11m), 02-01 (13m), 02-02 (~10m), 03-01 (6m)
+- Trend: Accelerating (03-01 was a fast client-only plan)
 
 *Updated after each plan completion*
 
@@ -60,9 +61,13 @@ Recent decisions affecting current work:
 - [02-01]: Marketing data combined from APP + BA sheets by summing metrics per platform per week
 - [02-01]: Background import with immediate HTTP response (non-blocking)
 - [02-01]: Per-parser error isolation (one sheet failure doesn't abort entire migration)
-- [02-02]: State machine wizard pattern (idle → preview → importing → complete)
+- [02-02]: State machine wizard pattern (idle -> preview -> importing -> complete)
 - [02-02]: EventSource SSE hook for real-time progress
 - [02-02]: Blob URL for client-side warning report download
+- [03-01]: No PapaParse on client -- lightweight RFC 4180 CSV generator instead
+- [03-01]: AUD_FORMATTER outputs plain toFixed(2) numbers for Excel compatibility
+- [03-01]: Each page exports its primary data table (not all tables combined)
+- [03-01]: ExportButtons uses callback prop pattern (parent owns data + column definitions)
 
 ### Pending Todos
 
@@ -77,5 +82,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed Phase 2 (Excel Data Migration) — both plans done, user-verified
+Stopped at: Completed 03-01-PLAN.md (CSV export system)
 Resume file: None
