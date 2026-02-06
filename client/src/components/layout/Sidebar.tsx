@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useSettings } from '../../lib/SettingsContext';
 
 export type PageId =
   | 'executive_summary'
@@ -129,6 +130,8 @@ export default function Sidebar({
   collapsed: boolean;
   onToggleCollapse: () => void;
 }) {
+  const { branding } = useSettings();
+
   return (
     <aside
       className={`bg-white border-r border-gray-200 flex flex-col h-full transition-all duration-200 ${
@@ -138,7 +141,15 @@ export default function Sidebar({
       {/* Logo + collapse */}
       <div className="h-14 flex items-center justify-between px-4 border-b border-gray-100">
         {!collapsed && (
-          <span className="text-sm font-bold text-[#1A1A2E] tracking-tight">Buildable</span>
+          branding.logoPath ? (
+            <img
+              src={branding.logoPath}
+              alt={branding.companyName}
+              className="max-h-8 max-w-[140px] object-contain"
+            />
+          ) : (
+            <span className="text-sm font-bold text-[#1A1A2E] tracking-tight">{branding.companyName}</span>
+          )
         )}
         <button
           onClick={onToggleCollapse}
@@ -167,13 +178,20 @@ export default function Sidebar({
               title={collapsed ? item.label : undefined}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-[#4573D2]/10 text-[#4573D2]'
+                  ? '' // Active styles applied via inline style below
                   : item.disabled
                   ? 'text-gray-300 cursor-not-allowed'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               }`}
+              style={isActive ? {
+                backgroundColor: branding.primaryColour + '1A',
+                color: branding.primaryColour,
+              } : undefined}
             >
-              <span className={`shrink-0 ${isActive ? 'text-[#4573D2]' : item.disabled ? 'text-gray-300' : 'text-gray-400'}`}>
+              <span
+                className={`shrink-0 ${!isActive && (item.disabled ? 'text-gray-300' : 'text-gray-400')}`}
+                style={isActive ? { color: branding.primaryColour } : undefined}
+              >
                 {item.icon}
               </span>
               {!collapsed && (
