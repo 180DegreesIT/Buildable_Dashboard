@@ -3,7 +3,6 @@ import { SettingsProvider } from './lib/SettingsContext';
 import { WeekProvider } from './lib/WeekContext';
 import Sidebar, { type PageId } from './components/layout/Sidebar';
 import TopBar from './components/layout/TopBar';
-import PlaceholderPage from './components/layout/PlaceholderPage';
 import ExecutiveSummary from './components/dashboard/ExecutiveSummary';
 import FinancialDeepDive from './components/dashboard/FinancialDeepDive';
 import RegionalPerformance from './components/dashboard/RegionalPerformance';
@@ -11,6 +10,7 @@ import UploadWizard from './components/upload/UploadWizard';
 import UploadHistory from './components/upload/UploadHistory';
 import TargetManagement from './components/targets/TargetManagement';
 import AdminSettings from './components/admin/AdminSettings';
+import UserManagement from './components/users/UserManagement';
 
 type DataManagementView = 'upload' | 'history';
 
@@ -88,12 +88,7 @@ function App() {
 
               {activePage === 'admin_settings' && <AdminSettings />}
 
-              {activePage === 'user_management' && (
-                <PlaceholderPage
-                  title="User Management"
-                  description="Manage users, roles, and page-level permissions. Coming in Plan 02."
-                />
-              )}
+              {activePage === 'user_management' && <UserManagement />}
             </main>
           </div>
         </div>
