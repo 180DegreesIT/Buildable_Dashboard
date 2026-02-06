@@ -17,6 +17,7 @@ import dashboardRoutes from './routes/dashboard.js';
 import settingsRoutes from './routes/settings.js';
 import usersRoutes from './routes/users.js';
 import migrationRoutes from './routes/migration.js';
+import xeroRoutes from './routes/xero.js';
 
 dotenv.config();
 
@@ -53,6 +54,7 @@ app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/settings', settingsRoutes);
 app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/migration', migrationRoutes);
+app.use('/api/v1/xero', xeroRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);
