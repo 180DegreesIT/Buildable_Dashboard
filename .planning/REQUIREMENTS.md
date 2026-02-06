@@ -99,50 +99,50 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MIGR-01 | TBD | Pending |
-| MIGR-02 | TBD | Pending |
-| MIGR-03 | TBD | Pending |
-| MIGR-04 | TBD | Pending |
-| MIGR-05 | TBD | Pending |
-| MIGR-06 | TBD | Pending |
-| ADMN-01 | TBD | Pending |
-| ADMN-02 | TBD | Pending |
-| ADMN-03 | TBD | Pending |
-| ADMN-04 | TBD | Pending |
-| ADMN-05 | TBD | Pending |
-| ADMN-06 | TBD | Pending |
-| USER-01 | TBD | Pending |
-| USER-02 | TBD | Pending |
-| USER-03 | TBD | Pending |
-| USER-04 | TBD | Pending |
-| USER-05 | TBD | Pending |
-| EXPRT-01 | TBD | Pending |
-| EXPRT-02 | TBD | Pending |
-| EXPRT-03 | TBD | Pending |
-| EXPRT-04 | TBD | Pending |
-| EXPRT-05 | TBD | Pending |
-| XERO-01 | TBD | Pending |
-| XERO-02 | TBD | Pending |
-| XERO-03 | TBD | Pending |
-| XERO-04 | TBD | Pending |
-| XERO-05 | TBD | Pending |
-| XERO-06 | TBD | Pending |
-| XERO-07 | TBD | Pending |
-| XERO-08 | TBD | Pending |
-| XERO-09 | TBD | Pending |
-| XERO-10 | TBD | Pending |
-| VALD-01 | TBD | Pending |
-| VALD-02 | TBD | Pending |
-| VALD-03 | TBD | Pending |
-| VALD-04 | TBD | Pending |
-| VALD-05 | TBD | Pending |
-| VALD-06 | TBD | Pending |
+| MIGR-01 | Phase 2 | Pending |
+| MIGR-02 | Phase 2 | Pending |
+| MIGR-03 | Phase 2 | Pending |
+| MIGR-04 | Phase 2 | Pending |
+| MIGR-05 | Phase 2 | Pending |
+| MIGR-06 | Phase 2 | Pending |
+| ADMN-01 | Phase 1 | Pending |
+| ADMN-02 | Phase 1 | Pending |
+| ADMN-03 | Phase 1 | Pending |
+| ADMN-04 | Phase 1 | Pending |
+| ADMN-05 | Phase 1 | Pending |
+| ADMN-06 | Phase 1 | Pending |
+| USER-01 | Phase 1 | Pending |
+| USER-02 | Phase 1 | Pending |
+| USER-03 | Phase 1 | Pending |
+| USER-04 | Phase 1 | Pending |
+| USER-05 | Phase 1 | Pending |
+| EXPRT-01 | Phase 3 | Pending |
+| EXPRT-02 | Phase 3 | Pending |
+| EXPRT-03 | Phase 3 | Pending |
+| EXPRT-04 | Phase 3 | Pending |
+| EXPRT-05 | Phase 3 | Pending |
+| XERO-01 | Phase 3 | Pending |
+| XERO-02 | Phase 3 | Pending |
+| XERO-03 | Phase 3 | Pending |
+| XERO-04 | Phase 3 | Pending |
+| XERO-05 | Phase 3 | Pending |
+| XERO-06 | Phase 3 | Pending |
+| XERO-07 | Phase 3 | Pending |
+| XERO-08 | Phase 3 | Pending |
+| XERO-09 | Phase 3 | Pending |
+| XERO-10 | Phase 3 | Pending |
+| VALD-01 | Phase 4 | Pending |
+| VALD-02 | Phase 4 | Pending |
+| VALD-03 | Phase 4 | Pending |
+| VALD-04 | Phase 4 | Pending |
+| VALD-05 | Phase 4 | Pending |
+| VALD-06 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 33 total
-- Mapped to phases: 0
-- Unmapped: 33 (pending roadmap creation)
+- Mapped to phases: 33
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-06*
-*Last updated: 2026-02-06 after initial definition*
+*Last updated: 2026-02-06 after roadmap creation (all 33 requirements mapped to phases)*
