@@ -32,7 +32,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- Admin settings backend and UI (branding, pass-through items, alert thresholds, system status, SettingsContext, N+1 fix)
+- [x] 01-01-PLAN.md -- Admin settings backend and UI (branding, pass-through items, alert thresholds, system status, SettingsContext, N+1 fix)
 - [ ] 01-02-PLAN.md -- User management backend and UI (user list, role assignment, permission matrix, dev user creation)
 
 ### Phase 2: Excel Data Migration
@@ -88,7 +88,7 @@ Phases 1 and 2 run in parallel (no dependencies between them). Phase 3 follows P
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Admin & User Management | 0/2 | Planned | - |
+| 1. Admin & User Management | 1/2 | In progress | - |
 | 2. Excel Data Migration | 0/1 | Not started | - |
 | 3. Export & Xero Integration | 0/3 | Not started | - |
 | 4. Validation & Go-Live | 0/1 | Not started | - |
