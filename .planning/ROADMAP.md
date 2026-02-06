@@ -44,10 +44,11 @@ Plans:
   2. Excel formula errors (#REF!, #DIV/0!) and merged cells are handled gracefully -- cells with errors are set to null, warnings are logged, and migration does not abort
   3. Running the migration script a second time produces identical results (idempotent -- no duplicate rows)
   4. Migration produces a summary report showing row counts per table and any data quality issues found
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 02-01: Excel parsing and migration scripts (sheet-specific readers, transposed layout handling, data import)
+- [ ] 02-01-PLAN.md -- Backend: ExcelJS parsers (6 sheet-specific parsers, cell extraction, migration orchestrator), API routes with SSE progress, idempotent upserts
+- [ ] 02-02-PLAN.md -- Frontend: Excel Migration UI (two-step wizard on Data Management page, dry-run preview, real-time progress, summary report)
 
 ### Phase 3: Export & Xero Integration
 **Goal**: Directors can download dashboard data as CSV or branded PDF, and the Xero API integration scaffold is ready for when credentials arrive
@@ -89,6 +90,6 @@ Phases 1 and 2 run in parallel (no dependencies between them). Phase 3 follows P
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Admin & User Management | 2/2 | Complete | 2026-02-06 |
-| 2. Excel Data Migration | 0/1 | Not started | - |
+| 2. Excel Data Migration | 0/2 | Not started | - |
 | 3. Export & Xero Integration | 0/3 | Not started | - |
 | 4. Validation & Go-Live | 0/1 | Not started | - |
