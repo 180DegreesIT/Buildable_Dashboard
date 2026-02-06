@@ -11,8 +11,9 @@ import UploadHistory from './components/upload/UploadHistory';
 import TargetManagement from './components/targets/TargetManagement';
 import AdminSettings from './components/admin/AdminSettings';
 import UserManagement from './components/users/UserManagement';
+import ExcelMigration from './components/migration/ExcelMigration';
 
-type DataManagementView = 'upload' | 'history';
+type DataManagementView = 'upload' | 'history' | 'migration';
 
 function App() {
   const [activePage, setActivePage] = useState<PageId>('executive_summary');
@@ -73,6 +74,16 @@ function App() {
                     >
                       Upload History
                     </button>
+                    <button
+                      onClick={() => setDataView('migration')}
+                      className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                        dataView === 'migration'
+                          ? 'bg-[#4573D2]/10 text-[#4573D2]'
+                          : 'text-[#6B7280] hover:text-gray-900 hover:bg-gray-100'
+                      }`}
+                    >
+                      Excel Migration
+                    </button>
                   </div>
 
                   {dataView === 'upload' && (
@@ -81,6 +92,7 @@ function App() {
                   {dataView === 'history' && (
                     <UploadHistory onNavigateUpload={() => setDataView('upload')} />
                   )}
+                  {dataView === 'migration' && <ExcelMigration />}
                 </div>
               )}
 
