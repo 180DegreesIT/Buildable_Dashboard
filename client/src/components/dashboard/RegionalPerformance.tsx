@@ -111,7 +111,7 @@ export default function RegionalPerformance() {
   const selected = selectedRegion ? teams.find(t => t.region === selectedRegion) : null;
 
   return (
-    <div className="space-y-6">
+    <div data-loaded="true" className="space-y-6">
       {/* ── Page Header with Export ── */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-[#1A1A2E]">Regional Performance</h1>

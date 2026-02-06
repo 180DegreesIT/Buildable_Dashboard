@@ -152,7 +152,7 @@ export default function TargetManagement() {
   const grouped = getGroupedTargets();
 
   return (
-    <div className="space-y-6">
+    <div data-loaded="true" className="space-y-6">
       {/* ── Header ── */}
       <div className="flex items-center justify-between">
         <div>
