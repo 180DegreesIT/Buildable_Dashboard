@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-06)
 
 **Core value:** April can upload weekly data and directors see accurate, reliable financial and operational reports
-**Current focus:** Phase 3 complete (Export & Xero Integration). All 3 plans delivered. Moving to Phase 4 (Validation).
+**Current focus:** Phase 4 in progress (Validation & Go-Live). Plan 01 complete (validation backbone). Plans 02-03 pending.
 
 ## Current Position
 
-Phase: 3 of 4 (Export & Xero Integration) -- COMPLETE
-Plan: 3 of 3 complete in current phase (03-01 CSV export, 03-02 PDF export, 03-03 Xero integration)
-Status: Phase complete, pending verification
-Last activity: 2026-02-06 -- Completed 03-02-PLAN.md (PDF export via Puppeteer)
+Phase: 4 of 4 (Validation & Go-Live) -- IN PROGRESS
+Plan: 1 of 3 complete in current phase (04-01 validation backbone)
+Status: In progress
+Last activity: 2026-02-06 -- Completed 04-01-PLAN.md (validation backbone)
 
-Progress: [█████████░] 90%
+Progress: [█████████░] 93%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: ~12 min
-- Total execution time: ~1.4 hours
+- Total plans completed: 8
+- Average duration: ~13 min
+- Total execution time: ~1.7 hours
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [█████████░] 90%
 | 1 | 2/2 | 26m | 13m |
 | 2 | 2/2 | 23m | ~12m |
 | 3 | 3/3 | 35m | ~12m |
+| 4 | 1/3 | 16m | 16m |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (~10m), 03-01 (6m), 03-03 (16m), 03-02 (13m)
-- Trend: Stable (~12m average, variance 6-16min based on scope)
+- Last 5 plans: 03-01 (6m), 03-03 (16m), 03-02 (13m), 04-01 (16m)
+- Trend: Stable (~13m average)
 
 *Updated after each plan completion*
 
@@ -80,28 +81,31 @@ Recent decisions affecting current work:
 - [03-02]: isAnimationActive={false} on all Recharts for static PDF capture
 - [03-02]: Fixed-width containers for print pages (1200px portrait, 1600px landscape)
 - [03-02]: PUPPETEER_EXECUTABLE_PATH env var for Edge fallback on Windows 11
+- [04-01]: API-level comparison instead of direct DB queries -- tests full stack including computed metrics
+- [04-01]: Seed reference JSON with known roadmap values until actual workbook provided
+- [04-01]: __dirname instead of import.meta.url (CJS project, no type:module)
+- [04-01]: Cash position only extracted for latest week (single-week snapshot sheet)
+- [04-01]: Cumulative review count = running sum of weekly review counts
 
 ### Pending Todos
 
-None yet.
+- Re-run extraction script when Excel workbook is available: `npx tsx server/src/scripts/extract-reference.ts [path]`
 
 ### Blockers/Concerns
 
 - Xero developer app credentials pending from 180D -- scaffold complete with mock mode, ready to activate when credentials arrive
 - Azure AD app registration pending from 180D -- dev auth bypass in place
+- Excel workbook not on build machine -- seed reference JSON used; full validation requires re-extraction
 
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 03-02-PLAN.md (PDF export via Puppeteer)
+Stopped at: Completed 04-01-PLAN.md (validation backbone)
 Resume file: None
 
-## Phase 3 Complete
+## Phase 4 Progress
 
-All 3 plans delivered:
-- 03-01: CSV export system (6min)
-- 03-02: PDF export via Puppeteer (13min)
-- 03-03: Xero integration scaffold (16min)
-
-Total phase duration: 35min
-Ready for Phase 4 verification workflow.
+Plan 1 of 3 complete:
+- 04-01: Validation backbone (16min) -- reference extraction + ValidationService + API route
+- 04-02: Performance benchmarking -- PENDING
+- 04-03: Validation dashboard UI -- PENDING
