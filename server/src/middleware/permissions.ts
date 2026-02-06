@@ -3,10 +3,29 @@ import type { DashboardPage, PermissionLevel, UserRole, UserPermission } from '.
 import prisma from '../db.js';
 
 /**
+ * All 13 DashboardPage values in canonical order.
+ */
+export const ALL_DASHBOARD_PAGES: DashboardPage[] = [
+  'executive_summary',
+  'financial_deep_dive',
+  'pl_monthly_detail',
+  'sales_pipeline',
+  'marketing_leads',
+  'operations_productivity',
+  'regional_performance',
+  'cash_position',
+  'data_management',
+  'target_management',
+  'staff_management',
+  'admin_settings',
+  'user_permission_management',
+];
+
+/**
  * Default permissions by role. Used when a user has no explicit
  * permission entry for a page.
  */
-const ROLE_DEFAULTS: Record<UserRole, PermissionLevel> = {
+export const ROLE_DEFAULTS: Record<UserRole, PermissionLevel> = {
   super_admin: 'write',
   executive: 'read',
   manager: 'read',
@@ -16,7 +35,7 @@ const ROLE_DEFAULTS: Record<UserRole, PermissionLevel> = {
 /**
  * Pages that staff can access by default (read-only).
  */
-const STAFF_READABLE_PAGES: DashboardPage[] = [
+export const STAFF_READABLE_PAGES: DashboardPage[] = [
   'executive_summary',
   'regional_performance',
 ];
@@ -24,10 +43,38 @@ const STAFF_READABLE_PAGES: DashboardPage[] = [
 /**
  * Pages restricted to super_admin only by default.
  */
-const ADMIN_ONLY_PAGES: DashboardPage[] = [
+export const ADMIN_ONLY_PAGES: DashboardPage[] = [
   'admin_settings',
   'user_permission_management',
 ];
+
+/**
+ * Compute the full set of 13 page permissions for a given role.
+ * Returns concrete permission entries for every DashboardPage.
+ */
+export function getDefaultPermissionsForRole(
+  role: UserRole
+): Array<{ page: DashboardPage; permissionLevel: PermissionLevel }> {
+  return ALL_DASHBOARD_PAGES.map((page) => {
+    if (role === 'super_admin') {
+      return { page, permissionLevel: 'write' as PermissionLevel };
+    }
+
+    if (ADMIN_ONLY_PAGES.includes(page)) {
+      return { page, permissionLevel: 'no_access' as PermissionLevel };
+    }
+
+    if (role === 'staff') {
+      return {
+        page,
+        permissionLevel: (STAFF_READABLE_PAGES.includes(page) ? 'read' : 'no_access') as PermissionLevel,
+      };
+    }
+
+    // executive and manager
+    return { page, permissionLevel: ROLE_DEFAULTS[role] };
+  });
+}
 
 /**
  * Resolve the effective permission for a user on a page.
