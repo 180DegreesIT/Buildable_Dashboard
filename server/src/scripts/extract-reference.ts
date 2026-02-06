@@ -15,7 +15,6 @@
 import ExcelJS from 'exceljs';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import {
   extractCell,
   extractNumericValue,
@@ -295,8 +294,6 @@ async function main() {
     checkpointWeeks,
   };
 
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
   const outputPath = path.resolve(__dirname, '..', 'data', 'reference-values.json');
 
   // Ensure data directory exists
