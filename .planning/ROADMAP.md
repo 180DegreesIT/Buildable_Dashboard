@@ -60,12 +60,12 @@ Plans:
   3. PDF exports use landscape orientation for wide-table pages (Financial, Regional) and print-optimised layout with clean spacing and no interactive elements
   4. Xero OAuth2 authorisation flow works end-to-end in mock mode (redirect, consent, callback, encrypted token storage, automatic refresh)
   5. Xero sync services can pull P&L, invoices, and bank summary data into the correct database tables, with configurable scheduling, rate limiting, and a manual "Sync Now" button in admin settings
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 03-01: CSV export (download buttons, server-side formatting, PapaParse)
-- [ ] 03-02: PDF export (Puppeteer setup, print layouts, branded generation)
-- [ ] 03-03: Xero API integration (OAuth2 flow, sync services, scheduling, mock mode)
+- [ ] 03-01-PLAN.md -- CSV export utility, enhanced ExportButtons, integration into all 4 dashboard pages (client-side CSV generation, AU formatting)
+- [ ] 03-02-PLAN.md -- PDF export via Puppeteer (print-optimised page variants, branded PDF generation service, export API route)
+- [ ] 03-03-PLAN.md -- Xero API integration scaffold (OAuth2 flow, encrypted tokens, sync services, scheduling, rate limiting, mock mode, admin UI)
 
 ### Phase 4: Validation & Go-Live
 **Goal**: System accuracy is verified against known Excel reference values and performance meets the 2-second load target
