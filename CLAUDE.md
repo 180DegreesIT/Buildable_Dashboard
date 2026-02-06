@@ -27,7 +27,7 @@ npm run migrate      # Run Prisma migrations (npx prisma migrate dev)
 
 Start/stop scripts: `start-dashboard.bat` / `stop-dashboard.bat`
 
-Client dev server: `http://localhost:6000` (proxies `/api` to server)
+Client dev server: `http://localhost:4200` (proxies `/api` to server)
 Server API: `http://localhost:6001`
 Health check: `GET /api/health`
 API prefix: `/api/v1/`
