@@ -515,3 +515,35 @@ model Setting {
 
   @@map("settings")
 }
+
+// ─── Xero Integration ────────────────────────────────────────────────────────
+
+model XeroToken {
+  id           Int       @id @default(autoincrement())
+  tenantId     String    @unique @map("tenant_id")
+  tenantName   String    @map("tenant_name")
+  accessToken  String    @map("access_token") // AES-256-GCM encrypted
+  refreshToken String    @map("refresh_token") // AES-256-GCM encrypted
+  idToken      String?   @map("id_token")
+  tokenType    String    @default("Bearer") @map("token_type")
+  expiresAt    DateTime  @map("expires_at")
+  scope        String
+  connectedAt  DateTime  @default(now()) @map("connected_at")
+  lastSyncAt   DateTime? @map("last_sync_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@map("xero_tokens")
+}
+
+model XeroSyncLog {
+  id          Int       @id @default(autoincrement())
+  syncType    String    @map("sync_type") // 'profit_and_loss', 'invoices', 'bank_summary'
+  weekEnding  DateTime  @map("week_ending") @db.Date
+  status      String // 'success', 'failed', 'partial'
+  recordCount Int       @default(0) @map("record_count")
+  errorLog    Json?     @map("error_log")
+  startedAt   DateTime  @default(now()) @map("started_at")
+  completedAt DateTime? @map("completed_at")
+
+  @@map("xero_sync_logs")
+}
