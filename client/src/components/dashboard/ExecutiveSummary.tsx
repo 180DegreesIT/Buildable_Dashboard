@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useWeek } from '../../lib/WeekContext';
 import { fetchExecutiveSummary, type ExecutiveSummaryData } from '../../lib/dashboardApi';
 import KPICard from '../ui/KPICard';
 import LoadingSkeleton from '../ui/LoadingSkeleton';
 import EmptyState from '../ui/EmptyState';
+import ExportButtons from '../ui/ExportButtons';
 import NetProfitChart from './NetProfitChart';
 import RevenueByCategoryChart from './RevenueByCategoryChart';
 import RegionalPerformanceChart from './RegionalPerformanceChart';
+import { downloadCsv, type CsvColumn, AUD_FORMATTER, PCT_FORMATTER, NUM_FORMATTER } from '../../lib/csvExport';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -104,8 +106,32 @@ export default function ExecutiveSummary() {
 
   const { kpis, projectSummary, salesSummary, leadBreakdown, reviews, teamPerformance, trends } = data;
 
+  const handleCsvExport = useCallback(() => {
+    // Export project summary as the primary executive table
+    const columns: CsvColumn<typeof projectSummary[0]>[] = [
+      { key: 'type', label: 'Type', format: (v) => v ? v.charAt(0).toUpperCase() + v.slice(1) : '' },
+      { key: 'hyperfloCount', label: 'Projects', format: (v) => NUM_FORMATTER(v) },
+      { key: 'xeroInvoiced', label: 'Invoiced ($)', format: (v) => AUD_FORMATTER(v) },
+      { key: 'target', label: 'Target ($)', format: (v) => AUD_FORMATTER(v) },
+      { key: 'percentageToTarget', label: '% to Target', format: (v) => PCT_FORMATTER(v) },
+      { key: 'newBusinessPercentage', label: 'New Business %', format: (v) => PCT_FORMATTER(v) },
+    ];
+    downloadCsv(`executive-summary-${selectedWeek}`, columns, projectSummary);
+  }, [projectSummary, selectedWeek]);
+
   return (
     <div className="space-y-6">
+      {/* ── Page Header with Export ── */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold text-[#1A1A2E]">Executive Summary</h1>
+        <ExportButtons
+          disabled={!data}
+          onCsvExport={handleCsvExport}
+          pageSlug="executive-summary"
+          weekEnding={selectedWeek}
+        />
+      </div>
+
       {/* ── KPI Cards ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7 gap-4">
         {/* 1. Net Profit */}

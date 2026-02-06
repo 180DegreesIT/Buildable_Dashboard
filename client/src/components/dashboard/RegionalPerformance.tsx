@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useWeek } from '../../lib/WeekContext';
 import {
   fetchRegionalPerformance,
@@ -7,7 +7,9 @@ import {
 } from '../../lib/dashboardApi';
 import LoadingSkeleton from '../ui/LoadingSkeleton';
 import EmptyState from '../ui/EmptyState';
+import ExportButtons from '../ui/ExportButtons';
 import RegionalTrendChart from './RegionalTrendChart';
+import { downloadCsv, type CsvColumn, AUD_FORMATTER, PCT_FORMATTER } from '../../lib/csvExport';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -96,8 +98,30 @@ export default function RegionalPerformance() {
   const regions = teams.map(t => t.region);
   const selected = selectedRegion ? teams.find(t => t.region === selectedRegion) : null;
 
+  const handleCsvExport = useCallback(() => {
+    const columns: CsvColumn<RegionalTeam>[] = [
+      { key: 'label', label: 'Team' },
+      { key: 'target', label: 'Target ($)', format: (v) => AUD_FORMATTER(v) },
+      { key: 'actual', label: 'Actual ($)', format: (v) => AUD_FORMATTER(v) },
+      { key: 'percentageToTarget', label: '% to Target', format: (v) => PCT_FORMATTER(v) },
+      { key: 'variance', label: 'Variance ($)', format: (v) => AUD_FORMATTER(v) },
+    ];
+    downloadCsv(`regional-performance-${selectedWeek}`, columns, teams);
+  }, [teams, selectedWeek]);
+
   return (
     <div className="space-y-6">
+      {/* ── Page Header with Export ── */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold text-[#1A1A2E]">Regional Performance</h1>
+        <ExportButtons
+          disabled={!data}
+          onCsvExport={handleCsvExport}
+          pageSlug="regional"
+          weekEnding={selectedWeek}
+        />
+      </div>
+
       {/* ── Region Card Grid ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {teams.map((team) => (

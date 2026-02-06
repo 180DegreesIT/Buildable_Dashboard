@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useWeek } from '../../lib/WeekContext';
 import {
   fetchFinancialDeepDive,
@@ -8,9 +8,11 @@ import {
 } from '../../lib/dashboardApi';
 import LoadingSkeleton from '../ui/LoadingSkeleton';
 import EmptyState from '../ui/EmptyState';
+import ExportButtons from '../ui/ExportButtons';
 import NetRevenueToggle from '../ui/NetRevenueToggle';
 import CostAnalysisChart from './CostAnalysisChart';
 import RevenueBreakdownChart from './RevenueBreakdownChart';
+import { downloadCsv, type CsvColumn, AUD_FORMATTER, PCT_FORMATTER } from '../../lib/csvExport';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -108,8 +110,38 @@ export default function FinancialDeepDive() {
 
   const { plWeekly, plMonthly, revenueBreakdown, revenueComparison, costAnalysisTrend, revenueTrend, cashPosition, agedReceivables, upcomingLiabilities } = data;
 
+  const handleCsvExport = useCallback(() => {
+    // Export the P&L weekly data as a structured table
+    if (plWeekly) {
+      const plRows = buildPLRows(plWeekly);
+      const columns: CsvColumn<PLRow>[] = [
+        { key: 'label', label: 'Line Item' },
+        {
+          key: 'value',
+          label: 'Amount',
+          format: (v, row) =>
+            row.label === '% Profit' || row.label === 'Revenue to Staff Ratio'
+              ? PCT_FORMATTER(v)
+              : AUD_FORMATTER(v),
+        },
+      ];
+      downloadCsv(`financial-pl-${selectedWeek}`, columns, plRows);
+    }
+  }, [plWeekly, selectedWeek]);
+
   return (
     <div className="space-y-6">
+      {/* ── Page Header with Export ── */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold text-[#1A1A2E]">Financial Deep Dive</h1>
+        <ExportButtons
+          disabled={!data}
+          onCsvExport={handleCsvExport}
+          pageSlug="financial"
+          weekEnding={selectedWeek}
+        />
+      </div>
+
       {/* ── P&L Summary ── */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
