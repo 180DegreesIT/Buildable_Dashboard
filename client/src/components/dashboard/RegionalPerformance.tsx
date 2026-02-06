@@ -71,6 +71,18 @@ export default function RegionalPerformance() {
     return () => { cancelled = true; };
   }, [selectedWeek]);
 
+  const handleCsvExport = useCallback(() => {
+    if (!data) return;
+    const columns: CsvColumn<RegionalTeam>[] = [
+      { key: 'label', label: 'Team' },
+      { key: 'target', label: 'Target ($)', format: (v) => AUD_FORMATTER(v) },
+      { key: 'actual', label: 'Actual ($)', format: (v) => AUD_FORMATTER(v) },
+      { key: 'percentageToTarget', label: '% to Target', format: (v) => PCT_FORMATTER(v) },
+      { key: 'variance', label: 'Variance ($)', format: (v) => AUD_FORMATTER(v) },
+    ];
+    downloadCsv(`regional-performance-${selectedWeek}`, columns, data.teams);
+  }, [data, selectedWeek]);
+
   if (weekLoading || loading) {
     return (
       <div className="space-y-6">
@@ -97,17 +109,6 @@ export default function RegionalPerformance() {
   const { teams, trend, regionLabels, drillDown } = data;
   const regions = teams.map(t => t.region);
   const selected = selectedRegion ? teams.find(t => t.region === selectedRegion) : null;
-
-  const handleCsvExport = useCallback(() => {
-    const columns: CsvColumn<RegionalTeam>[] = [
-      { key: 'label', label: 'Team' },
-      { key: 'target', label: 'Target ($)', format: (v) => AUD_FORMATTER(v) },
-      { key: 'actual', label: 'Actual ($)', format: (v) => AUD_FORMATTER(v) },
-      { key: 'percentageToTarget', label: '% to Target', format: (v) => PCT_FORMATTER(v) },
-      { key: 'variance', label: 'Variance ($)', format: (v) => AUD_FORMATTER(v) },
-    ];
-    downloadCsv(`regional-performance-${selectedWeek}`, columns, teams);
-  }, [teams, selectedWeek]);
 
   return (
     <div className="space-y-6">

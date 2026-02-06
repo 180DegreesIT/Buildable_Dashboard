@@ -91,6 +91,27 @@ export default function TargetManagement() {
     return () => { cancelled = true; };
   }, [activeTab, historyType, historyEntity]);
 
+  const handleCsvExport = useCallback(() => {
+    const columns: CsvColumn<Target>[] = [
+      {
+        key: 'targetType',
+        label: 'Target Type',
+        format: (v, row) => {
+          if (row.targetType === 'team_revenue' && row.entity) {
+            return REGION_LABELS[row.entity] ?? row.entity;
+          }
+          return TARGET_TYPE_LABELS[v as TargetType] ?? v;
+        },
+      },
+      { key: 'amount', label: 'Amount (Weekly $)', format: (v) => AUD_FORMATTER(v) },
+      { key: 'effectiveFrom', label: 'Effective From', format: (v) => DATE_FORMATTER_AU(v) },
+      { key: 'effectiveTo', label: 'Effective To', format: (v) => DATE_FORMATTER_AU(v) },
+      { key: 'setBy', label: 'Set By', format: (v) => v ?? '' },
+      { key: 'notes', label: 'Notes', format: (v) => v ?? '' },
+    ];
+    downloadCsv(`targets-${selectedWeek}`, columns, targets);
+  }, [targets, selectedWeek]);
+
   function handleSaved() {
     setEditTarget(null);
     setShowCreate(false);
@@ -129,27 +150,6 @@ export default function TargetManagement() {
   if (error) return <EmptyState title="Error loading targets" message={error} />;
 
   const grouped = getGroupedTargets();
-
-  const handleCsvExport = useCallback(() => {
-    const columns: CsvColumn<Target>[] = [
-      {
-        key: 'targetType',
-        label: 'Target Type',
-        format: (v, row) => {
-          if (row.targetType === 'team_revenue' && row.entity) {
-            return REGION_LABELS[row.entity] ?? row.entity;
-          }
-          return TARGET_TYPE_LABELS[v as TargetType] ?? v;
-        },
-      },
-      { key: 'amount', label: 'Amount (Weekly $)', format: (v) => AUD_FORMATTER(v) },
-      { key: 'effectiveFrom', label: 'Effective From', format: (v) => DATE_FORMATTER_AU(v) },
-      { key: 'effectiveTo', label: 'Effective To', format: (v) => DATE_FORMATTER_AU(v) },
-      { key: 'setBy', label: 'Set By', format: (v) => v ?? '' },
-      { key: 'notes', label: 'Notes', format: (v) => v ?? '' },
-    ];
-    downloadCsv(`targets-${selectedWeek}`, columns, targets);
-  }, [targets, selectedWeek]);
 
   return (
     <div className="space-y-6">

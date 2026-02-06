@@ -87,6 +87,23 @@ export default function FinancialDeepDive() {
     return () => { cancelled = true; };
   }, [selectedWeek]);
 
+  const handleCsvExport = useCallback(() => {
+    if (!data?.plWeekly) return;
+    const plRows = buildPLRows(data.plWeekly);
+    const columns: CsvColumn<PLRow>[] = [
+      { key: 'label', label: 'Line Item' },
+      {
+        key: 'value',
+        label: 'Amount',
+        format: (v, row) =>
+          row.label === '% Profit' || row.label === 'Revenue to Staff Ratio'
+            ? PCT_FORMATTER(v)
+            : AUD_FORMATTER(v),
+      },
+    ];
+    downloadCsv(`financial-pl-${selectedWeek}`, columns, plRows);
+  }, [data, selectedWeek]);
+
   if (weekLoading || loading) {
     return (
       <div className="space-y-6">
@@ -109,25 +126,6 @@ export default function FinancialDeepDive() {
   }
 
   const { plWeekly, plMonthly, revenueBreakdown, revenueComparison, costAnalysisTrend, revenueTrend, cashPosition, agedReceivables, upcomingLiabilities } = data;
-
-  const handleCsvExport = useCallback(() => {
-    // Export the P&L weekly data as a structured table
-    if (plWeekly) {
-      const plRows = buildPLRows(plWeekly);
-      const columns: CsvColumn<PLRow>[] = [
-        { key: 'label', label: 'Line Item' },
-        {
-          key: 'value',
-          label: 'Amount',
-          format: (v, row) =>
-            row.label === '% Profit' || row.label === 'Revenue to Staff Ratio'
-              ? PCT_FORMATTER(v)
-              : AUD_FORMATTER(v),
-        },
-      ];
-      downloadCsv(`financial-pl-${selectedWeek}`, columns, plRows);
-    }
-  }, [plWeekly, selectedWeek]);
 
   return (
     <div className="space-y-6">

@@ -74,6 +74,19 @@ export default function ExecutiveSummary() {
     return () => { cancelled = true; };
   }, [selectedWeek]);
 
+  const handleCsvExport = useCallback(() => {
+    if (!data) return;
+    const columns: CsvColumn<(typeof data.projectSummary)[0]>[] = [
+      { key: 'type', label: 'Type', format: (v) => v ? v.charAt(0).toUpperCase() + v.slice(1) : '' },
+      { key: 'hyperfloCount', label: 'Projects', format: (v) => NUM_FORMATTER(v) },
+      { key: 'xeroInvoiced', label: 'Invoiced ($)', format: (v) => AUD_FORMATTER(v) },
+      { key: 'target', label: 'Target ($)', format: (v) => AUD_FORMATTER(v) },
+      { key: 'percentageToTarget', label: '% to Target', format: (v) => PCT_FORMATTER(v) },
+      { key: 'newBusinessPercentage', label: 'New Business %', format: (v) => PCT_FORMATTER(v) },
+    ];
+    downloadCsv(`executive-summary-${selectedWeek}`, columns, data.projectSummary);
+  }, [data, selectedWeek]);
+
   if (weekLoading || loading) {
     return (
       <div className="space-y-6">
@@ -105,19 +118,6 @@ export default function ExecutiveSummary() {
   }
 
   const { kpis, projectSummary, salesSummary, leadBreakdown, reviews, teamPerformance, trends } = data;
-
-  const handleCsvExport = useCallback(() => {
-    // Export project summary as the primary executive table
-    const columns: CsvColumn<typeof projectSummary[0]>[] = [
-      { key: 'type', label: 'Type', format: (v) => v ? v.charAt(0).toUpperCase() + v.slice(1) : '' },
-      { key: 'hyperfloCount', label: 'Projects', format: (v) => NUM_FORMATTER(v) },
-      { key: 'xeroInvoiced', label: 'Invoiced ($)', format: (v) => AUD_FORMATTER(v) },
-      { key: 'target', label: 'Target ($)', format: (v) => AUD_FORMATTER(v) },
-      { key: 'percentageToTarget', label: '% to Target', format: (v) => PCT_FORMATTER(v) },
-      { key: 'newBusinessPercentage', label: 'New Business %', format: (v) => PCT_FORMATTER(v) },
-    ];
-    downloadCsv(`executive-summary-${selectedWeek}`, columns, projectSummary);
-  }, [projectSummary, selectedWeek]);
 
   return (
     <div className="space-y-6">
