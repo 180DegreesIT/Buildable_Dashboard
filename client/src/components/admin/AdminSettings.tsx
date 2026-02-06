@@ -2,6 +2,7 @@ import BrandingSection from './BrandingSection';
 import PassThroughSection from './PassThroughSection';
 import AlertThresholds from './AlertThresholds';
 import SystemStatus from './SystemStatus';
+import ValidationPanel from './ValidationPanel';
 
 export default function AdminSettings() {
   return (
@@ -18,6 +19,7 @@ export default function AdminSettings() {
         <PassThroughSection />
         <AlertThresholds />
         <SystemStatus />
+        <ValidationPanel />
       </div>
     </div>
   );
