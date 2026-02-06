@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Admin & User Management** - Configuration foundation and access control UI
 - [x] **Phase 2: Excel Data Migration** - Import 30 weeks of historical data from workbook
 - [x] **Phase 3: Export & Xero Integration** - CSV/PDF download and Xero API scaffold
-- [ ] **Phase 4: Validation & Go-Live** - Verify data accuracy and system performance
+- [x] **Phase 4: Validation & Go-Live** - Verify data accuracy and system performance
 
 ## Phase Details
 
@@ -80,8 +80,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 04-01-PLAN.md -- Reference value extraction from Excel, ValidationService with API-level comparison, validation API route
-- [ ] 04-02-PLAN.md -- Performance benchmark (Puppeteer), CSV round-trip test, target workflow test, ValidationPanel UI in admin settings
+- [x] 04-01-PLAN.md -- Reference value extraction from Excel, ValidationService with API-level comparison, validation API route
+- [x] 04-02-PLAN.md -- Performance benchmark (Puppeteer), CSV round-trip test, target workflow test, ValidationPanel UI in admin settings
 
 ## Progress
 
@@ -93,4 +93,4 @@ Phases 1 and 2 run in parallel (no dependencies between them). Phase 3 follows P
 | 1. Admin & User Management | 2/2 | Complete | 2026-02-06 |
 | 2. Excel Data Migration | 2/2 | Complete | 2026-02-06 |
 | 3. Export & Xero Integration | 3/3 | Complete | 2026-02-06 |
-| 4. Validation & Go-Live | 0/2 | Not started | - |
+| 4. Validation & Go-Live | 2/2 | Complete | 2026-02-06 |

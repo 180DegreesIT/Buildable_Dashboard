@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-06)
 
 **Core value:** April can upload weekly data and directors see accurate, reliable financial and operational reports
-**Current focus:** Phase 4 in progress (Validation & Go-Live). Plans 01-02 complete (validation backbone + performance & validation suite). Plan 03 pending.
+**Current focus:** All 4 phases complete. Milestone v1.0 ready for audit.
 
 ## Current Position
 
-Phase: 4 of 4 (Validation & Go-Live) -- IN PROGRESS
-Plan: 2 of 3 complete in current phase (04-02 performance & validation suite)
-Status: In progress
-Last activity: 2026-02-06 -- Completed 04-02-PLAN.md (performance & validation suite)
+Phase: 4 of 4 (Validation & Go-Live) -- COMPLETE
+Plan: 2 of 2 complete in current phase (04-01 validation backbone, 04-02 performance & validation suite)
+Status: All phases complete
+Last activity: 2026-02-06 -- Completed Phase 4 (Validation & Go-Live)
 
-Progress: [██████████] 96%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
 - Total plans completed: 9
 - Average duration: ~13 min
-- Total execution time: ~1.9 hours
+- Total execution time: ~2.0 hours
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [██████████] 96%
 | 1 | 2/2 | 26m | 13m |
 | 2 | 2/2 | 23m | ~12m |
 | 3 | 3/3 | 35m | ~12m |
-| 4 | 2/3 | 31m | ~16m |
+| 4 | 2/2 | 31m | ~16m |
 
 **Recent Trend:**
-- Last 5 plans: 03-03 (16m), 03-02 (13m), 04-01 (16m), 04-02 (15m)
+- Last 5 plans: 03-02 (13m), 03-03 (16m), 04-01 (16m), 04-02 (15m)
 - Trend: Stable (~15m average)
 
 *Updated after each plan completion*
@@ -85,12 +85,12 @@ Recent decisions affecting current work:
 - [04-01]: Seed reference JSON with known roadmap values until actual workbook provided
 - [04-01]: __dirname instead of import.meta.url (CJS project, no type:module)
 - [04-01]: Cash position only extracted for latest week (single-week snapshot sheet)
+- [04-01]: Cumulative review count = running sum of weekly review counts
 - [04-02]: Print routes used for performance benchmarking (exercises same API calls and data rendering)
 - [04-02]: CSV round-trip tests serialisation/deserialisation without modifying database
 - [04-02]: Target workflow uses breakeven type with far-past date to avoid conflicts
 - [04-02]: ValidationPanel uses expandable sections (not tabs) for simpler implementation
 - [04-02]: data-loaded attribute pattern on dashboard pages for render completion signalling
-- [04-01]: Cumulative review count = running sum of weekly review counts
 
 ### Pending Todos
 
@@ -105,12 +105,16 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 04-02-PLAN.md (performance & validation suite)
+Stopped at: All phases complete. Milestone v1.0 ready for audit.
 Resume file: None
 
-## Phase 4 Progress
+## Milestone Complete
 
-Plan 2 of 3 complete:
-- 04-01: Validation backbone (16min) -- reference extraction + ValidationService + API route
-- 04-02: Performance & validation suite (15min) -- PerformanceBenchmark + CSV round-trip + target workflow + ValidationPanel UI
-- 04-03: Remaining validation work -- PENDING
+All 4 phases delivered:
+- Phase 1: Admin & User Management (26min, 2 plans)
+- Phase 2: Excel Data Migration (23min, 2 plans)
+- Phase 3: Export & Xero Integration (35min, 3 plans)
+- Phase 4: Validation & Go-Live (31min, 2 plans)
+
+Total: 9 plans, ~2.0 hours execution time
+33/33 v1 requirements complete

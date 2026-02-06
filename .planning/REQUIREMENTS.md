@@ -54,12 +54,12 @@
 
 ### End-to-End Validation
 
-- [ ] **VALD-01**: Week 30 KPI values match Excel reference (Net Profit $62,210.45, Budget $40,203)
-- [ ] **VALD-02**: Regional team figures match for Week 30 (Cairns $24,560.60 vs $38,580 target, SEQ Resi $73,838.32 vs $51,888, NQ Commercial $35,820.60 vs $16,248)
-- [ ] **VALD-03**: Lead source data matches for Week 30 (Google: 70, SEO: 118, Total: ~257)
-- [ ] **VALD-04**: CSV upload round-trip test (export data as CSV → reimport → data matches)
-- [ ] **VALD-05**: Target management workflow test (create target → verify applies to correct weeks → change target → verify history)
-- [ ] **VALD-06**: Executive Summary loads in under 2 seconds with 30 weeks of historical data
+- [x] **VALD-01**: Week 30 KPI values match Excel reference (Net Profit $62,210.45, Budget $40,203)
+- [x] **VALD-02**: Regional team figures match for Week 30 (Cairns $24,560.60 vs $38,580 target, SEQ Resi $73,838.32 vs $51,888, NQ Commercial $35,820.60 vs $16,248)
+- [x] **VALD-03**: Lead source data matches for Week 30 (Google: 70, SEO: 118, Total: ~257)
+- [x] **VALD-04**: CSV upload round-trip test (export data as CSV → reimport → data matches)
+- [x] **VALD-05**: Target management workflow test (create target → verify applies to correct weeks → change target → verify history)
+- [x] **VALD-06**: Executive Summary loads in under 2 seconds with 30 weeks of historical data
 
 ## v2 Requirements
 
@@ -131,12 +131,12 @@
 | XERO-08 | Phase 3 | Complete |
 | XERO-09 | Phase 3 | Complete |
 | XERO-10 | Phase 3 | Complete |
-| VALD-01 | Phase 4 | Pending |
-| VALD-02 | Phase 4 | Pending |
-| VALD-03 | Phase 4 | Pending |
-| VALD-04 | Phase 4 | Pending |
-| VALD-05 | Phase 4 | Pending |
-| VALD-06 | Phase 4 | Pending |
+| VALD-01 | Phase 4 | Complete |
+| VALD-02 | Phase 4 | Complete |
+| VALD-03 | Phase 4 | Complete |
+| VALD-04 | Phase 4 | Complete |
+| VALD-05 | Phase 4 | Complete |
+| VALD-06 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 33 total
@@ -145,4 +145,4 @@
 
 ---
 *Requirements defined: 2026-02-06*
-*Last updated: 2026-02-06 after Phase 3 completion (32 requirements complete, 6 pending)*
+*Last updated: 2026-02-06 after Phase 4 completion (33/33 requirements complete)*
