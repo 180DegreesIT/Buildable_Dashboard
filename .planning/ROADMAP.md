@@ -47,7 +47,7 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- Backend: ExcelJS parsers (6 sheet-specific parsers, cell extraction, migration orchestrator), API routes with SSE progress, idempotent upserts
+- [x] 02-01-PLAN.md -- Backend: ExcelJS parsers (6 sheet-specific parsers, cell extraction, migration orchestrator), API routes with SSE progress, idempotent upserts
 - [ ] 02-02-PLAN.md -- Frontend: Excel Migration UI (two-step wizard on Data Management page, dry-run preview, real-time progress, summary report)
 
 ### Phase 3: Export & Xero Integration
@@ -90,6 +90,6 @@ Phases 1 and 2 run in parallel (no dependencies between them). Phase 3 follows P
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Admin & User Management | 2/2 | Complete | 2026-02-06 |
-| 2. Excel Data Migration | 0/2 | Not started | - |
+| 2. Excel Data Migration | 1/2 | In progress | - |
 | 3. Export & Xero Integration | 0/3 | Not started | - |
 | 4. Validation & Go-Live | 0/1 | Not started | - |
