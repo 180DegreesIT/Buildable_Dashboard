@@ -5,33 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-02-06)
 
 **Core value:** April can upload weekly data and directors see accurate, reliable financial and operational reports
-**Current focus:** Phase 1: Admin & User Management (parallel with Phase 2: Excel Data Migration)
+**Current focus:** Phase 1 complete. Next: Phase 2 (Excel Data Migration) or Phase 3 (Export & Xero)
 
 ## Current Position
 
-Phase: 1 of 4 (Admin & User Management)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-06 -- Completed 01-01-PLAN.md
+Phase: 1 of 4 (Admin & User Management) -- COMPLETE
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-02-06 -- Completed 01-02-PLAN.md
 
-Progress: [█░░░░░░░░░] 14%
+Progress: [██░░░░░░░░] 28%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 15 min
-- Total execution time: 0.25 hours
+- Total plans completed: 2
+- Average duration: 13 min
+- Total execution time: 0.43 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1 | 1/2 | 15m | 15m |
+| 1 | 2/2 | 26m | 13m |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (15m)
-- Trend: N/A (first plan)
+- Last 5 plans: 01-01 (15m), 01-02 (11m)
+- Trend: Improving
 
 *Updated after each plan completion*
 
@@ -49,6 +49,9 @@ Recent decisions affecting current work:
 - [01-01]: Inline styles for dynamic branding colours in sidebar (replaces hard-coded Tailwind classes)
 - [01-01]: express.static for uploads placed before auth middleware (logo loads without auth)
 - [01-01]: Merge-safe upsert pattern in SettingsService (prevents race condition)
+- [01-02]: Exported permission constants rather than duplicating (reuse in users route)
+- [01-02]: Full 13-page permission replacement on save (not partial upsert)
+- [01-02]: parseId helper for safe Express route param parsing
 
 ### Pending Todos
 
@@ -62,6 +65,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-06T02:37:09Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-02-06T02:55:24Z
+Stopped at: Completed 01-02-PLAN.md (Phase 1 complete)
 Resume file: None

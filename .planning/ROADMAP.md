@@ -12,7 +12,7 @@ The dashboard's core views, CSV upload system, and database schema are complete 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Admin & User Management** - Configuration foundation and access control UI
+- [x] **Phase 1: Admin & User Management** - Configuration foundation and access control UI
 - [ ] **Phase 2: Excel Data Migration** - Import 30 weeks of historical data from workbook
 - [ ] **Phase 3: Export & Xero Integration** - CSV/PDF download and Xero API scaffold
 - [ ] **Phase 4: Validation & Go-Live** - Verify data accuracy and system performance
@@ -33,7 +33,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md -- Admin settings backend and UI (branding, pass-through items, alert thresholds, system status, SettingsContext, N+1 fix)
-- [ ] 01-02-PLAN.md -- User management backend and UI (user list, role assignment, permission matrix, dev user creation)
+- [x] 01-02-PLAN.md -- User management backend and UI (user list, role assignment, permission matrix, dev user creation)
 
 ### Phase 2: Excel Data Migration
 **Goal**: Dashboard displays 30 weeks of accurate historical data (Jul 2024 - Jan 2025) imported from the Excel workbook
@@ -88,7 +88,7 @@ Phases 1 and 2 run in parallel (no dependencies between them). Phase 3 follows P
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Admin & User Management | 1/2 | In progress | - |
+| 1. Admin & User Management | 2/2 | Complete | 2026-02-06 |
 | 2. Excel Data Migration | 0/1 | Not started | - |
 | 3. Export & Xero Integration | 0/3 | Not started | - |
 | 4. Validation & Go-Live | 0/1 | Not started | - |
