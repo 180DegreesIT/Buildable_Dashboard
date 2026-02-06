@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SettingsProvider } from './lib/SettingsContext';
 import { WeekProvider } from './lib/WeekContext';
 import Sidebar, { type PageId } from './components/layout/Sidebar';
@@ -12,13 +12,63 @@ import TargetManagement from './components/targets/TargetManagement';
 import AdminSettings from './components/admin/AdminSettings';
 import UserManagement from './components/users/UserManagement';
 import ExcelMigration from './components/migration/ExcelMigration';
+import PrintExecutiveSummary from './components/print/PrintExecutiveSummary';
+import PrintFinancial from './components/print/PrintFinancial';
+import PrintRegional from './components/print/PrintRegional';
+import PrintTargets from './components/print/PrintTargets';
 
 type DataManagementView = 'upload' | 'history' | 'migration';
+
+// ─── Print Router ───────────────────────────────────────────────────────────
+
+function PrintRouter({ page, weekEnding }: { page: string; weekEnding: string }) {
+  switch (page) {
+    case 'executive-summary':
+      return <PrintExecutiveSummary weekEnding={weekEnding} />;
+    case 'financial':
+      return <PrintFinancial weekEnding={weekEnding} />;
+    case 'regional':
+      return <PrintRegional weekEnding={weekEnding} />;
+    case 'targets':
+      return <PrintTargets weekEnding={weekEnding} />;
+    default:
+      return (
+        <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
+          <h1>Unknown print page: {page}</h1>
+          <p>Valid pages: executive-summary, financial, regional, targets</p>
+        </div>
+      );
+  }
+}
+
+// ─── Hash Parser ────────────────────────────────────────────────────────────
+
+function parsePrintHash(hash: string): { page: string; week: string } | null {
+  if (!hash.startsWith('#/print/')) return null;
+  const rest = hash.replace('#/print/', '');
+  const [pagePart, queryPart] = rest.split('?');
+  const params = new URLSearchParams(queryPart || '');
+  const week = params.get('week') || '';
+  return { page: pagePart, week };
+}
+
+// ─── App ────────────────────────────────────────────────────────────────────
 
 function App() {
   const [activePage, setActivePage] = useState<PageId>('executive_summary');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [dataView, setDataView] = useState<DataManagementView>('upload');
+  const [printMode, setPrintMode] = useState<{ page: string; week: string } | null>(null);
+
+  useEffect(() => {
+    function checkHash() {
+      const result = parsePrintHash(window.location.hash);
+      setPrintMode(result);
+    }
+    checkHash();
+    window.addEventListener('hashchange', checkHash);
+    return () => window.removeEventListener('hashchange', checkHash);
+  }, []);
 
   function handleNavigate(page: PageId) {
     setActivePage(page);
@@ -27,6 +77,16 @@ function App() {
     }
   }
 
+  // ── Print Mode: render print-optimised page without app shell ──
+  if (printMode) {
+    return (
+      <SettingsProvider>
+        <PrintRouter page={printMode.page} weekEnding={printMode.week} />
+      </SettingsProvider>
+    );
+  }
+
+  // ── Normal App Shell ──
   return (
     <SettingsProvider>
       <WeekProvider>
