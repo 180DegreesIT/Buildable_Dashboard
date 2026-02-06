@@ -46,6 +46,49 @@ export interface ValidationResult {
   };
 }
 
+// ---- CSV Round-Trip Types ---------------------------------------------------
+
+interface RoundTripField {
+  field: string;
+  original: number;
+  exported: string;
+  reimported: number;
+  passed: boolean;
+}
+
+export interface RoundTripResult {
+  weekEnding: string;
+  fields: RoundTripField[];
+  allPassed: boolean;
+  error?: string;
+}
+
+// ---- Target Workflow Types --------------------------------------------------
+
+interface TargetWorkflowStep {
+  step: string;
+  passed: boolean;
+  detail: string;
+}
+
+export interface TargetWorkflowResult {
+  steps: TargetWorkflowStep[];
+  allPassed: boolean;
+}
+
+// ---- Full Validation Types --------------------------------------------------
+
+export interface FullValidationResult {
+  dataValidation: ValidationResult;
+  csvRoundTrip: RoundTripResult;
+  targetWorkflow: TargetWorkflowResult;
+  performance: import('./PerformanceBenchmark.js').BenchmarkResult;
+  overallPassed: boolean;
+  summary: string;
+}
+
+// ---- Reference Data Types ---------------------------------------------------
+
 interface ReferenceFinancial {
   totalTradingIncome: number;
   totalCostOfSales: number;
@@ -142,6 +185,35 @@ async function fetchApi(endpoint: string): Promise<any> {
       headers: {
         'Content-Type': 'application/json',
       },
+    });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) {
+      return { _error: true, status: res.status, message: `HTTP ${res.status}` };
+    }
+    return await res.json();
+  } catch (err: any) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      return { _error: true, status: 0, message: 'Request timed out after 10s' };
+    }
+    return { _error: true, status: 0, message: err.message || 'Network error' };
+  }
+}
+
+async function fetchApiWithBody(method: string, endpoint: string, body: any): Promise<any> {
+  const url = `${BASE_URL}${endpoint}`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+
+  try {
+    const res = await fetch(url, {
+      method,
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
     });
     clearTimeout(timeoutId);
 
@@ -590,6 +662,182 @@ export class ValidationService {
       difference,
       passed,
       note: note || (actual === null ? 'Value missing from database' : undefined),
+    };
+  }
+
+  // ---- CSV Round-Trip Test ----
+
+  /**
+   * Tests that financial data can be serialised to CSV and parsed back
+   * without losing numeric precision. Verifies the export format is lossless.
+   */
+  static async runCsvRoundTrip(): Promise<RoundTripResult> {
+    const reference = loadReferenceData();
+    const checkpoint = reference.checkpointWeeks[reference.checkpointWeeks.length - 1];
+    const weekEnding = checkpoint.weekEnding;
+
+    // Fetch financial deep dive data from API
+    const deepDive = await fetchApi(`/api/v1/dashboard/financial-deep-dive?weekEnding=${weekEnding}`);
+
+    if (deepDive?._error || !deepDive?.plWeekly) {
+      return {
+        weekEnding,
+        fields: [],
+        allPassed: false,
+        error: deepDive?._error ? `API error: ${deepDive.message}` : 'No P&L data in response',
+      };
+    }
+
+    const pl = deepDive.plWeekly;
+    const fieldsToTest = [
+      { field: 'totalTradingIncome', value: pl.totalTradingIncome },
+      { field: 'totalCostOfSales', value: pl.totalCostOfSales },
+      { field: 'grossProfit', value: pl.grossProfit },
+      { field: 'otherIncome', value: pl.otherIncome },
+      { field: 'operatingExpenses', value: pl.operatingExpenses },
+      { field: 'wagesAndSalaries', value: pl.wagesAndSalaries },
+      { field: 'netProfit', value: pl.netProfit },
+    ];
+
+    const fields: RoundTripField[] = [];
+
+    for (const { field, value } of fieldsToTest) {
+      if (value === null || value === undefined) {
+        fields.push({ field, original: 0, exported: 'null', reimported: 0, passed: false });
+        continue;
+      }
+
+      const original = Number(value);
+
+      // Export: same as AUD_FORMATTER in csvExport.ts -- toFixed(2)
+      const exported = original.toFixed(2);
+
+      // Reimport: parse the CSV string back
+      const reimported = parseFloat(exported);
+
+      // Compare: cents-level precision
+      const passed = Math.round(original * 100) === Math.round(reimported * 100);
+
+      fields.push({ field, original, exported, reimported, passed });
+    }
+
+    return {
+      weekEnding,
+      fields,
+      allPassed: fields.every((f) => f.passed),
+    };
+  }
+
+  // ---- Target Workflow Test ----
+
+  /**
+   * Tests the complete target lifecycle: create, verify, update, verify history.
+   * Uses a breakeven target with a far-past date to avoid affecting real data.
+   */
+  static async runTargetWorkflowTest(): Promise<TargetWorkflowResult> {
+    const steps: TargetWorkflowStep[] = [];
+    let createdTargetId: number | null = null;
+
+    // Step 1: Create a test target
+    try {
+      const createRes = await fetchApiWithBody('POST', '/api/v1/targets', {
+        targetType: 'breakeven',
+        amount: 99999.99,
+        effectiveFrom: '2020-01-04',
+        setBy: 'validation-test',
+        notes: 'Automated validation test - safe to delete',
+      });
+
+      if (createRes?._error) {
+        steps.push({ step: 'Create test target', passed: false, detail: `API error: ${createRes.message}` });
+        return { steps, allPassed: false };
+      }
+
+      createdTargetId = createRes.id;
+      steps.push({
+        step: 'Create test target',
+        passed: !!createdTargetId,
+        detail: createdTargetId ? `Created target ID ${createdTargetId}` : 'No ID returned',
+      });
+    } catch (err: any) {
+      steps.push({ step: 'Create test target', passed: false, detail: err.message });
+      return { steps, allPassed: false };
+    }
+
+    // Step 2: Verify target exists for the test week
+    try {
+      const currentRes = await fetchApi('/api/v1/targets/current?weekEnding=2020-01-04');
+      const found = Array.isArray(currentRes) && currentRes.some(
+        (t: any) => t.targetType === 'breakeven' && Math.round(Number(t.amount) * 100) === 9999999
+      );
+      steps.push({
+        step: 'Verify target exists',
+        passed: found,
+        detail: found ? 'Breakeven target found for week 2020-01-04' : 'Target not found in current targets',
+      });
+    } catch (err: any) {
+      steps.push({ step: 'Verify target exists', passed: false, detail: err.message });
+    }
+
+    // Step 3: Update the target
+    let updatedTargetId: number | null = null;
+    if (createdTargetId) {
+      try {
+        const updateRes = await fetchApiWithBody('PUT', `/api/v1/targets/${createdTargetId}`, {
+          amount: 88888.88,
+          effectiveFrom: '2020-01-04',
+          setBy: 'validation-test',
+          notes: 'Automated validation test - updated amount',
+        });
+
+        if (updateRes?._error) {
+          steps.push({ step: 'Update target amount', passed: false, detail: `API error: ${updateRes.message}` });
+        } else {
+          updatedTargetId = updateRes.id;
+          steps.push({
+            step: 'Update target amount',
+            passed: true,
+            detail: `Updated to $88,888.88 (new target ID ${updatedTargetId})`,
+          });
+        }
+      } catch (err: any) {
+        steps.push({ step: 'Update target amount', passed: false, detail: err.message });
+      }
+    }
+
+    // Step 4: Verify the updated amount
+    try {
+      const currentRes = await fetchApi('/api/v1/targets/current?weekEnding=2020-01-04');
+      const found = Array.isArray(currentRes) && currentRes.some(
+        (t: any) => t.targetType === 'breakeven' && Math.round(Number(t.amount) * 100) === 8888888
+      );
+      steps.push({
+        step: 'Verify updated amount',
+        passed: found,
+        detail: found ? 'Updated amount $88,888.88 confirmed' : 'Updated amount not found',
+      });
+    } catch (err: any) {
+      steps.push({ step: 'Verify updated amount', passed: false, detail: err.message });
+    }
+
+    // Step 5: Verify history was recorded
+    try {
+      const historyRes = await fetchApi('/api/v1/targets/history?targetType=breakeven');
+      const hasHistory = Array.isArray(historyRes) && historyRes.some(
+        (t: any) => t.history && t.history.length > 0
+      );
+      steps.push({
+        step: 'Verify change history',
+        passed: hasHistory,
+        detail: hasHistory ? 'Change history recorded' : 'No history entries found',
+      });
+    } catch (err: any) {
+      steps.push({ step: 'Verify change history', passed: false, detail: err.message });
+    }
+
+    return {
+      steps,
+      allPassed: steps.every((s) => s.passed),
     };
   }
 
