@@ -29,11 +29,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Admin can configure alert thresholds (net profit, team performance, cash position) and see placeholder system status cards for Xero, 3CX, and Reportei
   4. Admin can view all users in a table, assign roles via dropdown, and toggle page-level Read/Write/No Access permissions in a matrix grid
   5. Changing a user's role automatically updates their default permissions (Super Admin gets full access, Staff gets minimal)
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 01-01: Admin settings backend and UI (branding, pass-through items, alert thresholds, system status)
-- [ ] 01-02: User management backend and UI (user list, role assignment, permission matrix)
+- [ ] 01-01-PLAN.md -- Admin settings backend and UI (branding, pass-through items, alert thresholds, system status, SettingsContext, N+1 fix)
+- [ ] 01-02-PLAN.md -- User management backend and UI (user list, role assignment, permission matrix, dev user creation)
 
 ### Phase 2: Excel Data Migration
 **Goal**: Dashboard displays 30 weeks of accurate historical data (Jul 2024 - Jan 2025) imported from the Excel workbook
@@ -88,7 +88,7 @@ Phases 1 and 2 run in parallel (no dependencies between them). Phase 3 follows P
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Admin & User Management | 0/2 | Not started | - |
+| 1. Admin & User Management | 0/2 | Planned | - |
 | 2. Excel Data Migration | 0/1 | Not started | - |
 | 3. Export & Xero Integration | 0/3 | Not started | - |
 | 4. Validation & Go-Live | 0/1 | Not started | - |
