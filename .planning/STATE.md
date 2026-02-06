@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-06)
 
 **Core value:** April can upload weekly data and directors see accurate, reliable financial and operational reports
-**Current focus:** Phase 4 in progress (Validation & Go-Live). Plan 01 complete (validation backbone). Plans 02-03 pending.
+**Current focus:** Phase 4 in progress (Validation & Go-Live). Plans 01-02 complete (validation backbone + performance & validation suite). Plan 03 pending.
 
 ## Current Position
 
 Phase: 4 of 4 (Validation & Go-Live) -- IN PROGRESS
-Plan: 1 of 3 complete in current phase (04-01 validation backbone)
+Plan: 2 of 3 complete in current phase (04-02 performance & validation suite)
 Status: In progress
-Last activity: 2026-02-06 -- Completed 04-01-PLAN.md (validation backbone)
+Last activity: 2026-02-06 -- Completed 04-02-PLAN.md (performance & validation suite)
 
-Progress: [█████████░] 93%
+Progress: [██████████] 96%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: ~13 min
-- Total execution time: ~1.7 hours
+- Total execution time: ~1.9 hours
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: [█████████░] 93%
 | 1 | 2/2 | 26m | 13m |
 | 2 | 2/2 | 23m | ~12m |
 | 3 | 3/3 | 35m | ~12m |
-| 4 | 1/3 | 16m | 16m |
+| 4 | 2/3 | 31m | ~16m |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (6m), 03-03 (16m), 03-02 (13m), 04-01 (16m)
-- Trend: Stable (~13m average)
+- Last 5 plans: 03-03 (16m), 03-02 (13m), 04-01 (16m), 04-02 (15m)
+- Trend: Stable (~15m average)
 
 *Updated after each plan completion*
 
@@ -85,6 +85,11 @@ Recent decisions affecting current work:
 - [04-01]: Seed reference JSON with known roadmap values until actual workbook provided
 - [04-01]: __dirname instead of import.meta.url (CJS project, no type:module)
 - [04-01]: Cash position only extracted for latest week (single-week snapshot sheet)
+- [04-02]: Print routes used for performance benchmarking (exercises same API calls and data rendering)
+- [04-02]: CSV round-trip tests serialisation/deserialisation without modifying database
+- [04-02]: Target workflow uses breakeven type with far-past date to avoid conflicts
+- [04-02]: ValidationPanel uses expandable sections (not tabs) for simpler implementation
+- [04-02]: data-loaded attribute pattern on dashboard pages for render completion signalling
 - [04-01]: Cumulative review count = running sum of weekly review counts
 
 ### Pending Todos
@@ -100,12 +105,12 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 04-01-PLAN.md (validation backbone)
+Stopped at: Completed 04-02-PLAN.md (performance & validation suite)
 Resume file: None
 
 ## Phase 4 Progress
 
-Plan 1 of 3 complete:
+Plan 2 of 3 complete:
 - 04-01: Validation backbone (16min) -- reference extraction + ValidationService + API route
-- 04-02: Performance benchmarking -- PENDING
-- 04-03: Validation dashboard UI -- PENDING
+- 04-02: Performance & validation suite (15min) -- PerformanceBenchmark + CSV round-trip + target workflow + ValidationPanel UI
+- 04-03: Remaining validation work -- PENDING
