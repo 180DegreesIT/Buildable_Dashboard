@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Admin & User Management** - Configuration foundation and access control UI
 - [x] **Phase 2: Excel Data Migration** - Import 30 weeks of historical data from workbook
-- [ ] **Phase 3: Export & Xero Integration** - CSV/PDF download and Xero API scaffold
+- [x] **Phase 3: Export & Xero Integration** - CSV/PDF download and Xero API scaffold
 - [ ] **Phase 4: Validation & Go-Live** - Verify data accuracy and system performance
 
 ## Phase Details
@@ -63,9 +63,9 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md -- CSV export utility, enhanced ExportButtons, integration into all 4 dashboard pages (client-side CSV generation, AU formatting)
-- [ ] 03-02-PLAN.md -- PDF export via Puppeteer (print-optimised page variants, branded PDF generation service, export API route)
-- [ ] 03-03-PLAN.md -- Xero API integration scaffold (OAuth2 flow, encrypted tokens, sync services, scheduling, rate limiting, mock mode, admin UI)
+- [x] 03-01-PLAN.md -- CSV export utility, enhanced ExportButtons, integration into all 4 dashboard pages (client-side CSV generation, AU formatting)
+- [x] 03-02-PLAN.md -- PDF export via Puppeteer (print-optimised page variants, branded PDF generation service, export API route)
+- [x] 03-03-PLAN.md -- Xero API integration scaffold (OAuth2 flow, encrypted tokens, sync services, scheduling, rate limiting, mock mode, admin UI)
 
 ### Phase 4: Validation & Go-Live
 **Goal**: System accuracy is verified against known Excel reference values and performance meets the 2-second load target
@@ -91,5 +91,5 @@ Phases 1 and 2 run in parallel (no dependencies between them). Phase 3 follows P
 |-------|----------------|--------|-----------|
 | 1. Admin & User Management | 2/2 | Complete | 2026-02-06 |
 | 2. Excel Data Migration | 2/2 | Complete | 2026-02-06 |
-| 3. Export & Xero Integration | 0/3 | Not started | - |
+| 3. Export & Xero Integration | 3/3 | Complete | 2026-02-06 |
 | 4. Validation & Go-Live | 0/1 | Not started | - |

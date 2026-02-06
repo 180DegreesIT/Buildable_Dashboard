@@ -33,24 +33,24 @@
 
 ### PDF & CSV Export
 
-- [ ] **EXPRT-01**: CSV download button on every data table across all dashboard pages
-- [ ] **EXPRT-02**: Branded PDF snapshot of each dashboard page (Executive Summary, Financial, Regional, Target Management)
-- [ ] **EXPRT-03**: PDF includes Buildable branding (logo, company name), page title, selected week, generation timestamp, all visible charts and tables
-- [ ] **EXPRT-04**: Landscape orientation for pages with wide tables (Financial, Regional)
-- [ ] **EXPRT-05**: Print-optimised layout for PDF rendering (clean spacing, no interactive elements)
+- [x] **EXPRT-01**: CSV download button on every data table across all dashboard pages
+- [x] **EXPRT-02**: Branded PDF snapshot of each dashboard page (Executive Summary, Financial, Regional, Target Management)
+- [x] **EXPRT-03**: PDF includes Buildable branding (logo, company name), page title, selected week, generation timestamp, all visible charts and tables
+- [x] **EXPRT-04**: Landscape orientation for pages with wide tables (Financial, Regional)
+- [x] **EXPRT-05**: Print-optimised layout for PDF rendering (clean spacing, no interactive elements)
 
 ### Xero API Integration
 
-- [ ] **XERO-01**: OAuth2 authorisation flow (redirect to Xero consent, callback endpoint)
-- [ ] **XERO-02**: Encrypted token storage (access token, refresh token, expiry timestamps in database)
-- [ ] **XERO-03**: Automatic token refresh handling (30-min access token lifecycle, 60-day refresh token inactivity window)
-- [ ] **XERO-04**: Sync service: P&L report → financial_weekly
-- [ ] **XERO-05**: Sync service: invoices → revenue_weekly and projects_weekly
-- [ ] **XERO-06**: Sync service: bank summary → cash_position_weekly
-- [ ] **XERO-07**: Configurable sync scheduling (cron job, default daily 6am AEST) plus manual "Sync Now" button
-- [ ] **XERO-08**: Rate limiting respecting Xero limits (60 calls/min, 5,000/day)
-- [ ] **XERO-09**: Mock mode for development without live Xero connection
-- [ ] **XERO-10**: Xero connection status displayed in admin settings
+- [x] **XERO-01**: OAuth2 authorisation flow (redirect to Xero consent, callback endpoint)
+- [x] **XERO-02**: Encrypted token storage (access token, refresh token, expiry timestamps in database)
+- [x] **XERO-03**: Automatic token refresh handling (30-min access token lifecycle, 60-day refresh token inactivity window)
+- [x] **XERO-04**: Sync service: P&L report → financial_weekly
+- [x] **XERO-05**: Sync service: invoices → revenue_weekly and projects_weekly
+- [x] **XERO-06**: Sync service: bank summary → cash_position_weekly
+- [x] **XERO-07**: Configurable sync scheduling (cron job, default daily 6am AEST) plus manual "Sync Now" button
+- [x] **XERO-08**: Rate limiting respecting Xero limits (60 calls/min, 5,000/day)
+- [x] **XERO-09**: Mock mode for development without live Xero connection
+- [x] **XERO-10**: Xero connection status displayed in admin settings
 
 ### End-to-End Validation
 
@@ -116,21 +116,21 @@
 | USER-03 | Phase 1 | Complete |
 | USER-04 | Phase 1 | Complete |
 | USER-05 | Phase 1 | Complete |
-| EXPRT-01 | Phase 3 | Pending |
-| EXPRT-02 | Phase 3 | Pending |
-| EXPRT-03 | Phase 3 | Pending |
-| EXPRT-04 | Phase 3 | Pending |
-| EXPRT-05 | Phase 3 | Pending |
-| XERO-01 | Phase 3 | Pending |
-| XERO-02 | Phase 3 | Pending |
-| XERO-03 | Phase 3 | Pending |
-| XERO-04 | Phase 3 | Pending |
-| XERO-05 | Phase 3 | Pending |
-| XERO-06 | Phase 3 | Pending |
-| XERO-07 | Phase 3 | Pending |
-| XERO-08 | Phase 3 | Pending |
-| XERO-09 | Phase 3 | Pending |
-| XERO-10 | Phase 3 | Pending |
+| EXPRT-01 | Phase 3 | Complete |
+| EXPRT-02 | Phase 3 | Complete |
+| EXPRT-03 | Phase 3 | Complete |
+| EXPRT-04 | Phase 3 | Complete |
+| EXPRT-05 | Phase 3 | Complete |
+| XERO-01 | Phase 3 | Complete |
+| XERO-02 | Phase 3 | Complete |
+| XERO-03 | Phase 3 | Complete |
+| XERO-04 | Phase 3 | Complete |
+| XERO-05 | Phase 3 | Complete |
+| XERO-06 | Phase 3 | Complete |
+| XERO-07 | Phase 3 | Complete |
+| XERO-08 | Phase 3 | Complete |
+| XERO-09 | Phase 3 | Complete |
+| XERO-10 | Phase 3 | Complete |
 | VALD-01 | Phase 4 | Pending |
 | VALD-02 | Phase 4 | Pending |
 | VALD-03 | Phase 4 | Pending |
@@ -145,4 +145,4 @@
 
 ---
 *Requirements defined: 2026-02-06*
-*Last updated: 2026-02-06 after Phase 2 completion (17 requirements complete, 16 pending)*
+*Last updated: 2026-02-06 after Phase 3 completion (32 requirements complete, 6 pending)*
