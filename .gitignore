@@ -12,3 +12,6 @@ server/src/generated/
 # Build artifacts
 client/dist/
 server/dist/
+
+# User uploads (logos etc)
+server/uploads/

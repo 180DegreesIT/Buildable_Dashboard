@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -13,6 +14,7 @@ import targetsRoutes from './routes/targets.js';
 import uploadsRoutes from './routes/uploads.js';
 import weeksRoutes from './routes/weeks.js';
 import dashboardRoutes from './routes/dashboard.js';
+import settingsRoutes from './routes/settings.js';
 
 dotenv.config();
 
@@ -21,6 +23,9 @@ const PORT = process.env.PORT || 6001;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve uploaded files (logos) without auth — needed for branding display
+app.use('/api/uploads', express.static(path.join(process.cwd(), 'server', 'uploads')));
 
 // Health check (no auth required)
 app.get('/api/health', (_req, res) => {
@@ -43,6 +48,7 @@ app.use('/api/v1/targets', targetsRoutes);
 app.use('/api/v1/uploads', uploadsRoutes);
 app.use('/api/v1/weeks', weeksRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/settings', settingsRoutes);
 
 // Error handler (must be last)
 app.use(errorHandler);

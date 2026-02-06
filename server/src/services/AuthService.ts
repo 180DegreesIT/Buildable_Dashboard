@@ -125,12 +125,14 @@ export class AuthService {
 
   /**
    * Get or create the dev bypass user (used when NODE_ENV=development).
+   * Includes permissions so the permission middleware can check in-memory.
    */
   static async getDevUser(): Promise<User> {
     const email = process.env.DEV_USER_EMAIL || 'admin@buildable.com.au';
     const displayName = process.env.DEV_USER_NAME || 'Dev Admin';
 
-    return prisma.user.upsert({
+    // Upsert the user first
+    const user = await prisma.user.upsert({
       where: { email },
       update: { lastLogin: new Date() },
       create: {
@@ -141,6 +143,14 @@ export class AuthService {
         lastLogin: new Date(),
       },
     });
+
+    // Re-fetch with permissions included (upsert doesn't reliably include relations)
+    const userWithPerms = await prisma.user.findUnique({
+      where: { id: user.id },
+      include: { permissions: true },
+    });
+
+    return userWithPerms ?? user;
   }
 
   /**

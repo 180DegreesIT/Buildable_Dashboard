@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { DashboardPage, PermissionLevel, UserRole } from '../generated/prisma/index.js';
+import type { DashboardPage, PermissionLevel, UserRole, UserPermission } from '../generated/prisma/index.js';
 import prisma from '../db.js';
 
 /**
@@ -31,17 +31,26 @@ const ADMIN_ONLY_PAGES: DashboardPage[] = [
 
 /**
  * Resolve the effective permission for a user on a page.
- * Checks explicit permissions first, then falls back to role defaults.
+ * Uses cached permissions from req.user when available to avoid N+1 DB queries.
+ * Falls back to a DB query only if permissions array is not provided.
  */
 async function resolvePermission(
   userId: number,
   role: UserRole,
-  page: DashboardPage
+  page: DashboardPage,
+  permissions?: UserPermission[]
 ): Promise<PermissionLevel> {
-  // Check for explicit permission
-  const explicit = await prisma.userPermission.findUnique({
-    where: { userId_page: { userId, page } },
-  });
+  // Check for explicit permission — use in-memory array if available
+  let explicit: { permissionLevel: PermissionLevel } | undefined | null;
+
+  if (permissions) {
+    explicit = permissions.find((p) => p.page === page);
+  } else {
+    // Fallback to DB query (only when permissions not loaded on req.user)
+    explicit = await prisma.userPermission.findUnique({
+      where: { userId_page: { userId, page } },
+    });
+  }
 
   if (explicit) return explicit.permissionLevel;
 
@@ -89,7 +98,17 @@ export function requirePermission(page: DashboardPage, requiredLevel: Permission
       return;
     }
 
-    const effectiveLevel = await resolvePermission(user.id, user.role as UserRole, page);
+    // Pass cached permissions from req.user to avoid N+1 DB queries.
+    // auth.ts loads permissions via getUserWithPermissions (include: { permissions: true })
+    // and getDevUser now also includes permissions.
+    const cachedPermissions = (user as any).permissions as UserPermission[] | undefined;
+
+    const effectiveLevel = await resolvePermission(
+      user.id,
+      user.role as UserRole,
+      page,
+      cachedPermissions
+    );
 
     if (LEVEL_RANK[effectiveLevel] < LEVEL_RANK[requiredLevel]) {
       res.status(403).json({
