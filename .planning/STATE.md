@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-02-06)
 
 **Core value:** April can upload weekly data and directors see accurate, reliable financial and operational reports
-**Current focus:** Phase 2 in progress (Excel Data Migration). Plan 01 complete, Plan 02 next (frontend UI).
+**Current focus:** Phase 2 complete. Phase 3 next (Export & Xero Integration).
 
 ## Current Position
 
-Phase: 2 of 4 (Excel Data Migration)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-06 -- Completed 02-01-PLAN.md
+Phase: 2 of 4 (Excel Data Migration) — COMPLETE
+Plan: 2 of 2 in current phase
+Status: Complete
+Last activity: 2026-02-06 -- Completed 02-02-PLAN.md (frontend migration UI, user-verified)
 
-Progress: [████░░░░░░] 37%
+Progress: [██████░░░░] 55%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 13 min
-- Total execution time: 0.65 hours
+- Total plans completed: 4
+- Average duration: ~12 min
+- Total execution time: ~0.8 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 2/2 | 26m | 13m |
-| 2 | 1/2 | 13m | 13m |
+| 2 | 2/2 | 23m | ~12m |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (15m), 01-02 (11m), 02-01 (13m)
-- Trend: Stable (~13m per plan)
+- Last 5 plans: 01-01 (15m), 01-02 (11m), 02-01 (13m), 02-02 (~10m)
+- Trend: Stable (~12m per plan)
 
 *Updated after each plan completion*
 
@@ -60,6 +60,9 @@ Recent decisions affecting current work:
 - [02-01]: Marketing data combined from APP + BA sheets by summing metrics per platform per week
 - [02-01]: Background import with immediate HTTP response (non-blocking)
 - [02-01]: Per-parser error isolation (one sheet failure doesn't abort entire migration)
+- [02-02]: State machine wizard pattern (idle → preview → importing → complete)
+- [02-02]: EventSource SSE hook for real-time progress
+- [02-02]: Blob URL for client-side warning report download
 
 ### Pending Todos
 
@@ -73,6 +76,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-06T05:16:43Z
-Stopped at: Completed 02-01-PLAN.md (Excel Migration Backend)
+Last session: 2026-02-06
+Stopped at: Completed Phase 2 (Excel Data Migration) — both plans done, user-verified
 Resume file: None

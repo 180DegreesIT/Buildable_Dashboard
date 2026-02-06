@@ -7,12 +7,12 @@
 
 ### Excel Data Migration
 
-- [ ] **MIGR-01**: Parse Weekly Report sheet (transposed layout — weeks as columns, metrics as rows) into financial_weekly, projects_weekly, team_performance_weekly, leads_weekly, google_reviews_weekly
-- [ ] **MIGR-02**: Parse Finance This Week sheet into cash_position_weekly (bank balances, receivables, payables)
-- [ ] **MIGR-03**: Handle #REF! and #DIV/0! errors gracefully (skip cells, set to null, log warnings)
-- [ ] **MIGR-04**: Import all 30 weeks (Jul 2024 – Jan 2025) with `data_source: 'backfilled'`
-- [ ] **MIGR-05**: Migration script is idempotent (re-runnable without duplicating data)
-- [ ] **MIGR-06**: Migration produces summary report (row counts per table, data quality issues found)
+- [x] **MIGR-01**: Parse Weekly Report sheet (transposed layout — weeks as columns, metrics as rows) into financial_weekly, projects_weekly, team_performance_weekly, leads_weekly, google_reviews_weekly
+- [x] **MIGR-02**: Parse Finance This Week sheet into cash_position_weekly (bank balances, receivables, payables)
+- [x] **MIGR-03**: Handle #REF! and #DIV/0! errors gracefully (skip cells, set to null, log warnings)
+- [x] **MIGR-04**: Import all 30 weeks (Jul 2024 – Jan 2025) with `data_source: 'backfilled'`
+- [x] **MIGR-05**: Migration script is idempotent (re-runnable without duplicating data)
+- [x] **MIGR-06**: Migration produces summary report (row counts per table, data quality issues found)
 
 ### Admin Settings
 
@@ -99,12 +99,12 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MIGR-01 | Phase 2 | Pending |
-| MIGR-02 | Phase 2 | Pending |
-| MIGR-03 | Phase 2 | Pending |
-| MIGR-04 | Phase 2 | Pending |
-| MIGR-05 | Phase 2 | Pending |
-| MIGR-06 | Phase 2 | Pending |
+| MIGR-01 | Phase 2 | Complete |
+| MIGR-02 | Phase 2 | Complete |
+| MIGR-03 | Phase 2 | Complete |
+| MIGR-04 | Phase 2 | Complete |
+| MIGR-05 | Phase 2 | Complete |
+| MIGR-06 | Phase 2 | Complete |
 | ADMN-01 | Phase 1 | Complete |
 | ADMN-02 | Phase 1 | Complete |
 | ADMN-03 | Phase 1 | Complete |
@@ -145,4 +145,4 @@
 
 ---
 *Requirements defined: 2026-02-06*
-*Last updated: 2026-02-06 after Phase 1 completion (11 requirements complete, 22 pending)*
+*Last updated: 2026-02-06 after Phase 2 completion (17 requirements complete, 16 pending)*

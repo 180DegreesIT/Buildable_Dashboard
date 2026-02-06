@@ -13,7 +13,7 @@ The dashboard's core views, CSV upload system, and database schema are complete 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Admin & User Management** - Configuration foundation and access control UI
-- [ ] **Phase 2: Excel Data Migration** - Import 30 weeks of historical data from workbook
+- [x] **Phase 2: Excel Data Migration** - Import 30 weeks of historical data from workbook
 - [ ] **Phase 3: Export & Xero Integration** - CSV/PDF download and Xero API scaffold
 - [ ] **Phase 4: Validation & Go-Live** - Verify data accuracy and system performance
 
@@ -48,7 +48,7 @@ Plans:
 
 Plans:
 - [x] 02-01-PLAN.md -- Backend: ExcelJS parsers (6 sheet-specific parsers, cell extraction, migration orchestrator), API routes with SSE progress, idempotent upserts
-- [ ] 02-02-PLAN.md -- Frontend: Excel Migration UI (two-step wizard on Data Management page, dry-run preview, real-time progress, summary report)
+- [x] 02-02-PLAN.md -- Frontend: Excel Migration UI (two-step wizard on Data Management page, dry-run preview, real-time progress, summary report)
 
 ### Phase 3: Export & Xero Integration
 **Goal**: Directors can download dashboard data as CSV or branded PDF, and the Xero API integration scaffold is ready for when credentials arrive
@@ -90,6 +90,6 @@ Phases 1 and 2 run in parallel (no dependencies between them). Phase 3 follows P
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Admin & User Management | 2/2 | Complete | 2026-02-06 |
-| 2. Excel Data Migration | 1/2 | In progress | - |
+| 2. Excel Data Migration | 2/2 | Complete | 2026-02-06 |
 | 3. Export & Xero Integration | 0/3 | Not started | - |
 | 4. Validation & Go-Live | 0/1 | Not started | - |
